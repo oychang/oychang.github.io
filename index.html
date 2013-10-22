@@ -1,1 +1,62 @@
-hi
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Oliver Chang</title>
+
+  <style type="text/css">
+    body {
+      max-width: 50em;
+      margin: 0 auto;
+      padding: 2em;
+
+      font-family: sans-serif;
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    a:visited { color: purple; }
+    .img-credit {
+      margin: 0;
+      text-align: right;
+      font-style: italic;
+      font-size: smaller;
+    }
+    .me { font-size:2em; }
+  </style>
+</head>
+<body class="bg">
+
+<img id="palette-image" src="img/2.jpg">
+<p class="fg1 img-credit" id="img-credit">small</p>
+
+<ul>
+  <li class="fg2 me">Oliver Chang</li>
+  <li>
+    <a class="fg2" href="https://github.com/oychang/resumay/raw/master/resume-oliver-chang.pdf">Résumé (PDF)</a>
+  </li>
+  <li>
+    <a class="fg2" href="https://github.com/oychang">GitHub</a>
+  </li>
+</ul>
+
+<canvas id="canvas-el" style="display:none;"></canvas>
+<script type="text/javascript" src="colors.min.js"></script>
+<script type="text/javascript">
+  var imgs = [
+    "Wonderlane @ http://www.flickr.com/photos/wonderlane/2697406615/",
+    "Zoomar @ http://www.flickr.com/photos/61456874@N00/129747709",
+    "OZinOh @ http://www.flickr.com/photos/75905404@N00/371038175"
+  ];
+
+  var i = Math.floor(Math.random() * imgs.length);
+  var creditEl = document.getElementById("img-credit");
+  document.getElementById("palette-image").src = "img/" + i + ".jpg";
+  creditEl.innerHTML = "by " + imgs[i];
+  color("canvas-el", {bgClass: "bg", fgClass: "fg1", fgClass2: "fg2"});
+</script>
+
+</body>
+</html>
