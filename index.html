@@ -42,20 +42,34 @@
   </li>
 </ul>
 
-<canvas id="canvas-el" style="display:none;"></canvas>
 <script type="text/javascript" src="colors.min.js"></script>
 <script type="text/javascript">
+  function setStyle(className, styleKey, styleValue) {
+    var els = document.getElementsByClassName(className);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      var oldStyle = el.getAttribute("style") || "";
+      el.setAttribute("style", oldStyle + styleKey + ":" + styleValue + ";");
+    }
+  }
   var imgs = [
     "Wonderlane @ http://www.flickr.com/photos/wonderlane/2697406615/",
     "Zoomar @ http://www.flickr.com/photos/61456874@N00/129747709",
     "OZinOh @ http://www.flickr.com/photos/75905404@N00/371038175"
   ];
 
+  document.getElementsByTagName("body")[0].style.display = "none";
   var i = Math.floor(Math.random() * imgs.length);
   var creditEl = document.getElementById("img-credit");
   document.getElementById("palette-image").src = "img/" + i + ".jpg";
   creditEl.innerHTML = "by " + imgs[i];
-  color("canvas-el", {bgClass: "bg", fgClass: "fg1", fgClass2: "fg2"});
+
+  color("palette-image", function (p) {
+    setStyle("bg", "background-color", "#" + p[0]);
+    setStyle("fg1", "color", "#" +  p[1]);
+    setStyle("fg2", "color", "#" + p[2]);
+    document.getElementsByTagName("body")[0].style.display = "";
+  });
 </script>
 
 </body>
