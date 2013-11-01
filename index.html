@@ -4,6 +4,12 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Oliver Chang</title>
 
+  <!-- Upper placement to test for existence of JS -->
+  <!-- If disabled, won't hide/show. -->
+  <!-- In addition, makes it so content hidden while loading other JS/CSS -->
+  <script type="text/javascript">
+  document.getElementsByTagName("body")[0].style.display = "none";
+  </script>
   <style type="text/css">
     body {
       max-width: 50em;
@@ -58,7 +64,6 @@
     "OZinOh @ http://www.flickr.com/photos/75905404@N00/371038175"
   ];
 
-  document.getElementsByTagName("body")[0].style.display = "none";
   var i = Math.floor(Math.random() * imgs.length);
   var creditEl = document.getElementById("img-credit");
   document.getElementById("palette-image").src = "img/" + i + ".jpg";
