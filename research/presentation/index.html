@@ -112,7 +112,7 @@ Rough Outline of presentation: required topics
     <h2>What?</h2>
 
     <ul>
-      <li>Generate 3D conformational ensembles on compound libraries (tedious, quadratic)</li>
+      <li>Generate 3D conformational ensembles on compound libraries (tedious, quadratic time)</li>
       <li>Compare & contrast CPU-based methods with GPU-based methods of generation</li>
 
       <li>Hybrid method: ligand-based, with attention to Gaussian shape similarity</li>
@@ -126,7 +126,8 @@ Rough Outline of presentation: required topics
     <ul>
       <li>Exploit GPU parallelism -- standard claim of 100x speedup</li>
       <li>Use publicly available data from PubChem -- huge stores of data</li>
-      <li>Apply methodology to drug design & virtual screening</li>
+      <li>PubChem: quantity over quality</li>
+      <li>Practical applications of methodology include drug design & virtual screening</li>
     </ul>
   </section>
 
@@ -139,6 +140,7 @@ Rough Outline of presentation: required topics
       <li>Not much domain knowledge</li>
       <li>Reading, understanding papers requires a lot of refreshing chemistry knowledge</li>
       <li>Using a lot of high-level frameworks, isolated from difficult GPU programming, e.g. CUDA/OpenCL</li>
+      <li>Abstraction requires benchmarking</li>
       <li>Handling large data sets</li>
     </ul>
   </section>
