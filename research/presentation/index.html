@@ -76,6 +76,10 @@ Rough Outline of presentation: required topics
       text-align: left;
     }
 
+    .padded-for-comfort {
+      padding-top: 0.5em !important;
+    }
+
     .bold { font-weight: bold }
   </style>
 
@@ -102,7 +106,7 @@ Rough Outline of presentation: required topics
     <h2>Who? Where?</h2>
 
     <ul>
-      <li>Stephan Schürer, <a href="mailto:sschurer@med.miami.edu">sschurer@med.miami.edu</a></li>
+      <li>Dr. Stephan Schürer, <a href="mailto:sschurer@med.miami.edu">sschurer@med.miami.edu</a></li>
       <li>Resources from UM's Center for Computational Science</li>
       <li>Specifically, Cheminformatics & the High Performance Computing Group</li>
     </ul>
@@ -111,11 +115,20 @@ Rough Outline of presentation: required topics
   <section>
     <h2>What?</h2>
 
+    <h4 class="padded-for-comfort">Primary</h4>
     <ul>
-      <li>Generate 3D conformational ensembles on compound libraries (tedious, quadratic time)</li>
-      <li>Compare & contrast CPU-based methods with GPU-based methods of generation</li>
+      <li>Generate 3D conformational ensembles on large, small-compound libraries (tedious, quadratic time)</li>
+    </ul>
 
+    <h4 class="padded-for-comfort">Secondary</h4>
+    <ul>
+      <li>Compare & contrast CPU-based methods with newer GPU-based methods of conformation</li>
       <li>Hybrid method: ligand-based, with attention to Gaussian shape similarity</li>
+      <li>Middle-of-the-road performance between ligand & structural methods</li>
+    </ul>
+
+    <h4 class="padded-for-comfort">Tertiary</h4>
+    <ul>
       <li>Test different library generation parameters, e.g. color (chemical alignment), energy minimization</li>
     </ul>
   </section>
