@@ -108,33 +108,27 @@ Rough Outline of presentation: required topics
   <section>
     <h2>What?</h2>
 
-    <h4 class="padded-for-comfort">Primary</h4>
-    <ul>
+    <ol>
       <li>Generate 3D conformational ensembles on large, small-compound libraries (tedious, quadratic time)</li>
-    </ul>
 
-    <h4 class="padded-for-comfort">Secondary</h4>
-    <ul>
-      <li>Compare & contrast CPU-based methods with newer GPU-based methods of conformation</li>
       <li>Hybrid method: ligand-based, with attention to Gaussian shape similarity</li>
-      <li>Middle-of-the-road performance between ligand & structural methods</li>
-    </ul>
+      <ul>
+        <li>Middle-of-the-road performance between ligand & structural methods</li>
+        <li>Compare & contrast CPU-based methods with newer GPU-based methods of conformation</li>
+      </ul>
 
-    <h4 class="padded-for-comfort">Tertiary</h4>
-    <ul>
       <li>Test different library generation parameters, e.g. color (chemical alignment), energy minimization</li>
-    </ul>
+    </ol>
   </section>
 
   <section>
     <h2>Why?</h2>
 
-    <ul>
+    <ol>
       <li>Exploit GPU parallelism -- standard claim of 100x speedup</li>
-      <li>Use publicly available data from PubChem -- huge stores of data</li>
-      <li>PubChem: quantity over quality</li>
+      <li>Use publicly available data from PubChem -- huge stores of data, quantity over quality</li>
       <li>Practical applications of methodology include drug design & virtual screening</li>
-    </ul>
+    </ol>
   </section>
 
   <section>
@@ -143,11 +137,9 @@ Rough Outline of presentation: required topics
 
   <section>
     <ul>
-      <li>Not much domain knowledge</li>
-      <li>Reading, understanding papers requires relearning a lot of chemistry knowledge</li>
+      <li>Not much domain knowledge...reading, understanding papers meant relearning a lot of chemistry knowledge</li>
       <li>Using a lot of high-level frameworks, isolated from difficult GPU programming, e.g. CUDA/OpenCL</li>
-      <li>Abstraction requires benchmarking</li>
-      <li>Handling large data sets (processing in parallel easy)</li>
+      <li>Handling large data sets</li>
     </ul>
   </section>
 
