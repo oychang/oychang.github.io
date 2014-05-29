@@ -84,21 +84,28 @@
     var getRandomInt = function (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     };
-    var generatePointInCircle = function () {
+    var generatePointInCircle = function (xMin, xMax, yMin, yMax) {
       while (true) {
-        var x = getRandomInt(0, width);
-        var y = getRandomInt(0, height);
+        var x = getRandomInt(xMin, xMax);
+        var y = getRandomInt(yMin, yMax);
         if (inCircle(x, y)) return [x, y];
       }
+    };
+    var generateInitialPoint = function () {
+      return generatePointInCircle(0, width, 0, height);
+    };
+    var generateAdjacentPoint = function (x, y) {
+      return generatePointInCircle(x - 1, x + 1, y - 1, y + 1);
     };
 
     function randomWalk (domId) {
       document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
       var line;
+      // tick once every second
       setInterval(function () {
         // initial setup
         if (! line) {
-          var coord = generatePointInCircle();
+          var coord = generateInitialPoint();
           line = svg.append('line')
             .attr({
               x1: coord[0],
@@ -109,10 +116,11 @@
               'stroke': 'black'
             });
         } else {
-          // line.attr({
-          //   x2: 100,
-          //   y2: 100
-          // });
+          var newCoord = generateAdjacentPoint(line.attr('x2'), line.attr('y2'));
+          line.attr({
+            x2: newCoord[0],
+            y2: newCoord[1]
+          });
         }
       }, 1 * 1000);
     }
