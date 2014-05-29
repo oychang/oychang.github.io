@@ -2,6 +2,8 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Oliver Chang</title>
 
   <style type="text/css">
@@ -18,23 +20,9 @@
       padding: 0;
     }
     a:visited { color: purple; }
-    .img-credit {
-      margin: 0;
-      text-align: right;
-      font-style: italic;
-      font-size: smaller;
-    }
-    .me { font-size:2em; }
   </style>
 </head>
-<body class="bg">
-<!-- Upper placement to test for existence of JS -->
-<!-- If disabled, won't hide/show. -->
-<!-- In addition, makes it so content hidden while loading other JS/CSS -->
-<script type="text/javascript">document.getElementsByTagName("body")[0].style.display = "none";</script>
-
-  <img id="palette-image" src="">
-  <p class="fg1 img-credit" id="img-credit"></p>
+<body>
 
   <ul>
     <li class="fg2 me">Oliver Chang</li>
@@ -45,35 +33,6 @@
       <a class="fg2" href="https://github.com/oychang">GitHub</a>
     </li>
   </ul>
-
-<script type="text/javascript" src="colors.min.js"></script>
-<script type="text/javascript">
-  function setStyle(className, styleKey, styleValue) {
-    var els = document.getElementsByClassName(className);
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      var oldStyle = el.getAttribute("style") || "";
-      el.setAttribute("style", oldStyle + styleKey + ":" + styleValue + ";");
-    }
-  }
-  var imgs = [
-    "Wonderlane @ http://www.flickr.com/photos/wonderlane/2697406615/",
-    "Zoomar @ http://www.flickr.com/photos/61456874@N00/129747709",
-    "OZinOh @ http://www.flickr.com/photos/75905404@N00/371038175"
-  ];
-
-  var i = Math.floor(Math.random() * imgs.length);
-  var creditEl = document.getElementById("img-credit");
-  document.getElementById("palette-image").src = "img/" + i + ".jpg";
-  creditEl.innerHTML = "by " + imgs[i];
-
-  color("palette-image", function (p) {
-    setStyle("bg", "background-color", "#" + p[0]);
-    setStyle("fg1", "color", "#" +  p[1]);
-    setStyle("fg2", "color", "#" + p[2]);
-    document.getElementsByTagName("body")[0].style.display = "";
-  });
-</script>
 
 </body>
 </html>
