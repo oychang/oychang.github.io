@@ -51,13 +51,14 @@
     // choose a random vis and then execute it
     var VIS_ID = 'vis';
     var TITLE_ID = 'vis-name';
-    var availableVis = {
+    var AVAIL_VIS = {
       'random walk': randomWalk
     };
-    _.sample(availableVis)(VIS_ID);
+    _.sample(AVAIL_VIS)();
 
     function randomWalk (domId) {
       document.getElementById(TITLE_ID).innerHTML = 'Random Walk';
+
     }
   })();
 </script>
