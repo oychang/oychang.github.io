@@ -48,15 +48,13 @@
 <script type="text/javascript" src="js/d3-min.js"></script>
 <script type="text/javascript">
   (function () {
-    // choose a random vis and then execute it
     var CONTAINER_ID = 'vis-container';
     var VIS_EL = '#vis';
     var TITLE_ID = 'vis-name';
     var AVAIL_VIS = {
       'random walk': randomWalk
     };
-    // setup d3 globals
-    var height = 128;
+    var height = 256;
     var width = height;
     var svg = d3.select(VIS_EL).append('svg')
       .attr({
@@ -92,7 +90,8 @@
     };
     var generateAdjacentPoint = function (x, y) {
       // not strictly adjacent points, but points with +- fudge factor
-      var fudge = 5;
+      // in the random walk, makes us have **large strides**
+      var fudge = 20;
       return generatePointInCircle(x - fudge, x + fudge, y - fudge, y + fudge);
     };
 
