@@ -68,12 +68,20 @@
         width: width
       });
     var vis = svg.append('circle')
-      .attr('r', width / 2)
-      .attr("transform", function(d) { return "translate(" + (width / 2) + "," + (height / 2) + ")"; });
+      .attr({
+        // this -2 offset is necessary to avoid lopping off stroke
+        r: (width - 2) / 2,
+        transform: "translate(" + (width / 2) + "," + (height / 2) + ")",
+        fill: 'none',
+        stroke: 'black',
+        'stroke-width': 2
+      });
 
     function randomWalk (domId) {
       document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
+      setInterval(function () {
 
+      }, 1 * 1000);
     }
   })();
 </script>
