@@ -100,24 +100,33 @@
       var lastPoint = generateInitialPoint();
       // warn: every tick we create another svg line element
       // put a hard limit on the number we can have
-      // at 250ms a tick & a max of 1000 ticks, we'll run for 4.167 minutes
-      var tickInMs = 250;
+      var tickInMs = 100;
       var maxTicks = 1000;
+      console.debug('walk will run for ' + (maxTicks / (1000 / tickInMs) / 60) + ' minutes');
       var ticks = 0;
       var interval = setInterval(function () {
         var coord = generateAdjacentPoint(lastPoint[0], lastPoint[1]);
-        svg.append('line')
+        var line = svg.append('line')
           .attr({
             x1: lastPoint[0],
             y1: lastPoint[1],
-            x2: coord[0],
-            y2: coord[1],
+            x2: lastPoint[0],
+            y2: lastPoint[1],
             'stroke-width': 1,
             'stroke': 'black'
-          });
+          })
+        .transition()
+        .attr({
+          x2: coord[0],
+          y2: coord[1]
+        })
+        .duration(100);
         lastPoint = coord;
         ticks++;
-        if (ticks >= maxTicks) clearInterval(interval);
+        if (ticks >= maxTicks) {
+          clearInterval(interval);
+          console.debug('hit max ticks...stopping');
+        }
       }, tickInMs);
     }
 
