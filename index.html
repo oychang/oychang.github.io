@@ -49,15 +49,24 @@
 <script type="text/javascript">
   (function () {
     // choose a random vis and then execute it
-    var VIS_ID = 'vis';
+    var VIS_EL = '#vis';
     var TITLE_ID = 'vis-name';
     var AVAIL_VIS = {
       'random walk': randomWalk
     };
     _.sample(AVAIL_VIS)();
 
+    // setup d3 globals
+    var height = 300;
+    var width = 300;
+    var svg = d3.select(VIS_EL).append('svg')
+      .attr({
+        height: height,
+        width: width
+      });
+
     function randomWalk (domId) {
-      document.getElementById(TITLE_ID).innerHTML = 'Random Walk';
+      document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
 
     }
   })();
