@@ -24,7 +24,7 @@
     <div class="pure-u-1 pure-u-lg-1-3 text-centered">
       <div id="vis"></div>
       <h4>
-        <small class="text-italic">Vis</small>
+        <small id="vis-name" class="text-italic">Vis</small>
       </h4>
     </div>
 
@@ -50,12 +50,14 @@
   (function () {
     // choose a random vis and then execute it
     var VIS_ID = 'vis';
+    var TITLE_ID = 'vis-name';
     var availableVis = {
       'random walk': randomWalk
     };
     _.sample(availableVis)(VIS_ID);
 
     function randomWalk (domId) {
+      document.getElementById(TITLE_ID).innerHTML = 'Random Walk';
     }
   })();
 </script>
