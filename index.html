@@ -55,8 +55,6 @@
     var AVAIL_VIS = {
       'random walk': randomWalk
     };
-    _.sample(AVAIL_VIS)();
-
     // setup d3 globals
     // todo: listen on window.onresize
     var containerWidth = document.getElementById(CONTAINER_ID).offsetWidth;
@@ -100,30 +98,27 @@
 
     function randomWalk (domId) {
       document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
-      var line;
-      // tick once every second
+      var lastPoint = generateInitialPoint();
       setInterval(function () {
-        // initial setup
-        if (! line) {
-          var coord = generateInitialPoint();
-          line = svg.append('line')
-            .attr({
-              x1: coord[0],
-              y1: coord[1],
-              x2: coord[0],
-              y2: coord[1],
-              'stroke-width': 1,
-              'stroke': 'black'
-            });
-        } else {
-          var newCoord = generateAdjacentPoint(line.attr('x2'), line.attr('y2'));
-          line.attr({
-            x2: newCoord[0],
-            y2: newCoord[1]
+        // var line = svg.select('line');
+        var coord = generateAdjacentPoint(lastPoint[0], lastPoint[1]);
+        console.log(lastPoint);
+        console.log(coord);
+        svg.append('line')
+          .attr({
+            x1: lastPoint[0],
+            y1: lastPoint[1],
+            x2: coord[0],
+            y2: coord[1],
+            'stroke-width': 1,
+            'stroke': 'black'
           });
-        }
-      }, 1 * 1000);
+        lastPoint = coord;
+      }, 0.5 * 1000);
     }
+
+    // run the vis
+    _.sample(AVAIL_VIS)();
   })();
 </script>
 </body>
