@@ -76,11 +76,31 @@
         stroke: 'black',
         'stroke-width': 2
       });
+    var inCircle = function (x, y) {
+      var sq = function (x) { return Math.pow(x, 2); };
+      var square_dist = sq((width / 2) - x) + sq((height / 2) - y);
+      return square_dist <= sq((width - 2) / 2);
+    };
+    var getRandomInt = function (min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+    var generatePointInCircle  = function () {
+      while (true) {
+        var x = getRandomInt(0, width);
+        var y = getRandomInt(0, height);
+        if (inCircle(x, y)) return [x, y];
+      }
+    };
 
     function randomWalk (domId) {
       document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
+      var line;
       setInterval(function () {
+        console.log(generatePointInCircle());
+        // initial setup
+/*        if (! line) {
 
+        }*/
       }, 1 * 1000);
     }
   })();
