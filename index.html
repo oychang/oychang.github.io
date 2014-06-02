@@ -100,9 +100,9 @@
       var lastPoint = generateInitialPoint();
       // warn: every tick we create another svg line element
       // put a hard limit on the number we can have
-      var tickInMs = 100;
-      var maxTicks = 1000;
-      console.debug('walk will run for ' + (maxTicks / (1000 / tickInMs) / 60) + ' minutes');
+      var TICK_IN_MS = 100;
+      var MAX_TICKS = 1000;
+      console.debug('walk will run for ' + (MAX_TICKS / (1000 / TICK_IN_MS) / 60) + ' minutes');
       var ticks = 0;
       var interval = setInterval(function () {
         var coord = generateAdjacentPoint(lastPoint[0], lastPoint[1]);
@@ -123,11 +123,11 @@
         .duration(100);
         lastPoint = coord;
         ticks++;
-        if (ticks >= maxTicks) {
+        if (ticks >= MAX_TICKS) {
           clearInterval(interval);
           console.debug('hit max ticks...stopping');
         }
-      }, tickInMs);
+      }, TICK_IN_MS);
     }
 
     // run the vis
