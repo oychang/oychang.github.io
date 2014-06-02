@@ -95,7 +95,7 @@
       return generatePointInCircle(x - fudge, x + fudge, y - fudge, y + fudge);
     };
 
-    function randomWalk (domId) {
+    function randomWalk () {
       document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
       var lastPoint = generateInitialPoint();
       // warn: every tick we create another svg line element
