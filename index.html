@@ -88,10 +88,10 @@
     var generateInitialPoint = function () {
       return generatePointInCircle(0, width, 0, height);
     };
-    var generateAdjacentPoint = function (x, y) {
+    var generateAdjacentPoint = function (x, y, fudge) {
       // not strictly adjacent points, but points with +- fudge factor
       // in the random walk, makes us have **large strides**
-      var fudge = 20;
+      fudge = fudge || 20;
       return generatePointInCircle(x - fudge, x + fudge, y - fudge, y + fudge);
     };
 
