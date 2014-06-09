@@ -1,0 +1,8 @@
+body {
+  max-width: 45em;
+  margin: 0 auto;
+  padding: 1em;
+}
+.text-centered { text-align: center; }
+.text-italic { font-style: italic; }
+.content { padding-top: 1em; }
