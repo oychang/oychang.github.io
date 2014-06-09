@@ -21,36 +21,37 @@
   </style>
 </head>
 <body>
-  <div class="pure-g">
-    <div id="vis-container" class="pure-u-1 pure-u-lg-2-5 text-centered">
-      <div id="vis"></div>
-      <h4>
-        <small id="vis-name" class="text-italic">Vis</small>
-      </h4>
-    </div>
+  <div class="pure-g pure-u-1">
+    <!-- <div class="pure-menu pure-menu-open pure-menu-horizontal">
+      <ul>
+        <a href="#" class="pure-menu-heading">Oliver Chang</a>
+          <ul>
+            <li><a href="#">Posts</a></li>
+          </ul>
+      </ul>
+    </div> -->
 
-    <div class="pure-u-1 pure-u-lg-3-5 text-centered">
-      <h1>Oliver Chang</h1>
-
-      <div class="pure-menu pure-menu-open pure-menu-horizontal">
-        <ul>
-          <li>
-            <a href="https://github.com/oychang/resumay/raw/master/resume-oliver-chang.pdf">Résumé (PDF)</a>
-          </li>
-          <li>
-            <a href="https://github.com/oychang">GitHub</a>
-          </li>
-        </ul>
+    <div class="content pure-g">
+      <div class="text-centered pure-u-1 pure-u-md-1-4">
+        <div id="vis"></div>
+        <h4>
+          <small id="vis-name" class="text-italic">Vis</small>
+        </h4>
       </div>
 
-      <div class="pure-menu pure-menu-open pure-menu-horizontal">
+      <div class="pure-u-1 pure-u-md-3-4">
+        <h2>Hi.</h2>
+        <h2>I'm Oliver Chang, a third-year undergraduate at the University of Miami studying Computer Science.</h2>
+        <h5>Track me down on the internet with the aid of these friends:</h5>
+
         <ul>
-          <li>
-            <p><a href="mailto:oliver@oychang.com">oliver@oychang.com</a></p>
-          </li>
+          <li><a href="https://github.com/oychang/resumay/raw/master/resume-oliver-chang.pdf">Résumé (PDF)</a></li>
+          <li><a href="https://github.com/oychang">GitHub</a></li>
+          <li><a href="mailto:oliver@oychang.com">oliver@oychang.com</a></li>
+          <li><a href="mailto:o.chang@umiami.edu">o.chang@umiami.edu</a></li>
+          <li><a href="tel:1-727-771-3641">727-771-3641</a></li>
         </ul>
       </div>
-
     </div>
   </div>
 
@@ -64,7 +65,7 @@
     var AVAIL_VIS = {
       'random walk': randomWalk
     };
-    var height = 256;
+    var height = 128;
     var width = height;
     var svg = d3.select(VIS_EL).append('svg')
       .attr({
