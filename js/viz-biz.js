@@ -83,5 +83,6 @@
   }
 
   // run the vis
-  _.sample(AVAIL_VIS)();
+  // _.sample(AVAIL_VIS)();
+  AVAIL_VIS[0]();
 })();
