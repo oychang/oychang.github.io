@@ -3,29 +3,27 @@
 
   var VIS_EL = '#vis';
   var TITLE_ID = 'vis-name';
-  var AVAIL_VIS = {
-    'random walk': randomWalk
-  };
-  var height = 128;
-  var width = height;
+  var AVAIL_VIS = [randomWalk];
+  var HEIGHT = 128;
+  var WIDTH = HEIGHT;
   var svg = d3.select(VIS_EL).append('svg')
     .attr({
-      height: height,
-      width: width
+      height: HEIGHT,
+      width: WIDTH
     });
   var vis = svg.append('circle')
     .attr({
       // this -2 offset is necessary to avoid lopping off stroke
-      r: (width - 2) / 2,
-      transform: "translate(" + (width / 2) + "," + (height / 2) + ")",
+      r: (WIDTH - 2) / 2,
+      transform: "translate(" + (WIDTH / 2) + "," + (HEIGHT / 2) + ")",
       fill: 'none',
       stroke: 'black',
       'stroke-width': 2
     });
   var inCircle = function (x, y) {
     var sq = function (x) { return Math.pow(x, 2); };
-    var square_dist = sq((width / 2) - x) + sq((height / 2) - y);
-    return square_dist <= sq((width - 2) / 2);
+    var square_dist = sq((WIDTH / 2) - x) + sq((HEIGHT / 2) - y);
+    return square_dist <= sq((WIDTH - 2) / 2);
   };
   var getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -38,7 +36,7 @@
     }
   };
   var generateInitialPoint = function () {
-    return generatePointInCircle(0, width, 0, height);
+    return generatePointInCircle(0, WIDTH, 0, HEIGHT);
   };
   var generateAdjacentPoint = function (x, y, fudge) {
     // not strictly adjacent points, but points with +- fudge factor
