@@ -3,7 +3,7 @@
 
   var VIS_EL = '#vis';
   var TITLE_ID = 'vis-name';
-  var AVAIL_VIS = [randomWalk];
+  var AVAIL_VIS = [spirograph, randomWalk];
   var HEIGHT = 128;
   var WIDTH = HEIGHT;
   var svg = d3.select(VIS_EL).append('svg')
@@ -25,6 +25,11 @@
     var square_dist = sq((WIDTH / 2) - x) + sq((HEIGHT / 2) - y);
     return square_dist <= sq((WIDTH - 2) / 2);
   };
+  // Inclusive ranges!
+  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+  var getRandomArbitrary = function (min, max) {
+    return Math.random() * (max - min) + min;
+  };
   var getRandomInt = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -43,6 +48,17 @@
     // in the random walk, makes us have **large strides**
     fudge = fudge || 20;
     return generatePointInCircle(x - fudge, x + fudge, y - fudge, y + fudge);
+  };
+  var parametricSpirographEquation = function (R, l, k, t) {
+    var x = R * (
+      ((1 - k) * Math.cos(t)) +
+      ((l * k) * (Math.cos((t * (1 - k)) / k)))
+    );
+    var y = R * (
+      ((1 - k) * Math.sin(t)) -
+      ((l * k) * (Math.sin((t * (1 - k)) / k)))
+    );
+    return [x, y];
   };
 
   function randomWalk () {
@@ -80,7 +96,47 @@
     }, TICK_IN_MS);
   }
 
-  // run the vis
-  // _.sample(AVAIL_VIS)();
-  AVAIL_VIS[0]();
+  function spirograph () {
+    document.getElementById(TITLE_ID).innerHTML = 'Spirograph';
+    var TICK_IN_MS = 155;
+    var MAX_T = 100;
+    var RADIUS = (WIDTH - 2) / 2;
+    var R = RADIUS;
+    var l = getRandomArbitrary(0.1, 0.9);
+    var k = getRandomArbitrary(0.1, 0.9);
+    var t = 0;
+
+    console.log(['R = ' + R, 'l = ' + l, 'k = ' + k,].join('; '));
+
+    var lastPoint = parametricSpirographEquation(R, l, k, 0);
+    var interval = setInterval(function () {
+      // R = getRandomInt(0, RADIUS);
+      var coord = parametricSpirographEquation(R, l, k, t);
+      var line = svg.append('line')
+        .attr({
+          x1: lastPoint[0] + RADIUS,
+          y1: lastPoint[1] + RADIUS,
+          x2: lastPoint[0] + RADIUS,
+          y2: lastPoint[1] + RADIUS,
+          'stroke-width': 1,
+          'stroke': 'black'
+        })
+      .transition()
+      .ease('linear')
+      .attr({
+        x2: coord[0] + RADIUS,
+        y2: coord[1] + RADIUS
+      })
+      .duration(TICK_IN_MS);
+      lastPoint = coord;
+      t++;
+
+      if (t > MAX_T) {
+        clearInterval(interval);
+        console.debug('t = ' + MAX_T + '...stopping');
+      }
+    }, TICK_IN_MS);
+  }
+
+  AVAIL_VIS[getRandomInt(0, AVAIL_VIS.length-1)]();
 })();
