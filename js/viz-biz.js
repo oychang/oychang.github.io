@@ -87,12 +87,13 @@
   function spirograph () {
     document.getElementById(TITLE_ID).innerHTML = 'Spirograph';
     var TICK_IN_MS = 155;
-    var MAX_T = 100;
+    var MAX_T = 200;
     var RADIUS = (WIDTH - 2) / 2;
+
     var R = RADIUS;
     var l = getRandomFloat(0.1, 0.9);
-    var k = getRandomFloat(0.1, 0.9);
-    var t = 0;
+    // capped so we have an exterior and interior spiro
+    var k = getRandomFloat(0.1, 0.3);
 
     function parametric (t) {
       var x = R * ((1-k) * Math.cos(t) + l * k * Math.cos(t / k - t));
@@ -102,9 +103,9 @@
 
     console.log(['R = ' + R, 'l = ' + l, 'k = ' + k,].join('; '));
 
-    var lastPoint = parametric(0);
+    var t = 0;
+    var lastPoint = parametric(t);
     var interval = setInterval(function () {
-      // R = getRandomInt(0, RADIUS);
       var coord = parametric(t);
       var line = svg.append('line')
         .attr({
@@ -125,9 +126,15 @@
       lastPoint = coord;
       t++;
 
-      if (t > MAX_T) {
+      if (t == MAX_T / 2) {
+        console.debug('t = ' + t + '...starting second drawing');
+        l = getRandomFloat(0.1, 0.9);
+        k = getRandomFloat(0.4, 0.9);
+        console.log(['R = ' + R, 'l = ' + l, 'k = ' + k,].join('; '));
+        lastPoint = parametric(t);
+      } else if (t > MAX_T) {
         clearInterval(interval);
-        console.debug('t = ' + MAX_T + '...stopping');
+        console.debug('t = ' + t + '...stopping');
       }
     }, TICK_IN_MS);
   }
