@@ -95,14 +95,8 @@
     var t = 0;
 
     function parametric (t) {
-      var x = R * (
-        ((1 - k) * Math.cos(t)) +
-        ((l * k) * (Math.cos((t * (1 - k)) / k)))
-      );
-      var y = R * (
-        ((1 - k) * Math.sin(t)) -
-        ((l * k) * (Math.sin((t * (1 - k)) / k)))
-      );
+      var x = R * ((1-k) * Math.cos(t) + l * k * Math.cos(t / k - t));
+      var y = R * ((1-k) * Math.sin(t) - l * k * Math.sin(t / k - t));
       return [x, y];
     }
 
