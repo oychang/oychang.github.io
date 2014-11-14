@@ -48,17 +48,6 @@
     fudge = fudge || 20;
     return generatePointInCircle(x - fudge, x + fudge, y - fudge, y + fudge);
   };
-  var parametricSpirographEquation = function (R, l, k, t) {
-    var x = R * (
-      ((1 - k) * Math.cos(t)) +
-      ((l * k) * (Math.cos((t * (1 - k)) / k)))
-    );
-    var y = R * (
-      ((1 - k) * Math.sin(t)) -
-      ((l * k) * (Math.sin((t * (1 - k)) / k)))
-    );
-    return [x, y];
-  };
 
   function randomWalk () {
     document.getElementById(TITLE_ID).innerHTML = 'A Random Walk';
@@ -105,12 +94,24 @@
     var k = getRandomFloat(0.1, 0.9);
     var t = 0;
 
+    function parametric (t) {
+      var x = R * (
+        ((1 - k) * Math.cos(t)) +
+        ((l * k) * (Math.cos((t * (1 - k)) / k)))
+      );
+      var y = R * (
+        ((1 - k) * Math.sin(t)) -
+        ((l * k) * (Math.sin((t * (1 - k)) / k)))
+      );
+      return [x, y];
+    }
+
     console.log(['R = ' + R, 'l = ' + l, 'k = ' + k,].join('; '));
 
-    var lastPoint = parametricSpirographEquation(R, l, k, 0);
+    var lastPoint = parametric(0);
     var interval = setInterval(function () {
       // R = getRandomInt(0, RADIUS);
-      var coord = parametricSpirographEquation(R, l, k, t);
+      var coord = parametric(t);
       var line = svg.append('line')
         .attr({
           x1: lastPoint[0] + RADIUS,
