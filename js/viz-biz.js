@@ -26,8 +26,7 @@
     return square_dist <= sq((WIDTH - 2) / 2);
   };
   // Inclusive ranges!
-  // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-  var getRandomArbitrary = function (min, max) {
+  var getRandomFloat = function (min, max) {
     return Math.random() * (max - min) + min;
   };
   var getRandomInt = function (min, max) {
@@ -102,8 +101,8 @@
     var MAX_T = 100;
     var RADIUS = (WIDTH - 2) / 2;
     var R = RADIUS;
-    var l = getRandomArbitrary(0.1, 0.9);
-    var k = getRandomArbitrary(0.1, 0.9);
+    var l = getRandomFloat(0.1, 0.9);
+    var k = getRandomFloat(0.1, 0.9);
     var t = 0;
 
     console.log(['R = ' + R, 'l = ' + l, 'k = ' + k,].join('; '));
