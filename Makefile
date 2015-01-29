@@ -1,5 +1,4 @@
 POSTS    = posts
-HELPERS  = helpers
 CSS      = css
 
 GENERATE = pandoc \
@@ -9,18 +8,10 @@ GENERATE = pandoc \
                 --template templates/post.html
 
 # https://tylercipriani.com/2014/05/13/replace-jekyll-with-pandoc-makefile.html
-all: $(addsuffix .html, $(basename $(wildcard $(POSTS)/*.md))) index.html
-
-index.html:
-	@echo "================"
-	@echo "Refreshing Index"
-	@echo "================"
+all: $(addsuffix .html, $(basename $(wildcard $(POSTS)/*.md)))
 
 %.html: %.md
 	$(GENERATE) "$<" -o "$@"
-
-css/github-markdown.css:
-	curl https://raw.githubusercontent.com/sindresorhus/github-markdown-css/gh-pages/github-markdown.css > css/github-markdown.css
 
 .PHONY: clean
 clean:
