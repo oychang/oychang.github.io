@@ -1,18 +1,22 @@
-POSTS    = posts
-CSS      = css
-
-GENERATE = pandoc \
+POSTS      = posts
+# Use this instead of a more make-ish pattern
+# to easily include subdirectories of $(POSTS)
+MD_FILES   = $(shell find $(POSTS) -type f -name '*.md')
+HTML_FILES = $(MD_FILES:.md=.html)
+GENERATE   = pandoc \
                 --smart \
                 --highlight-style pygments \
                 --standalone \
                 --template templates/post.html
 
-# https://tylercipriani.com/2014/05/13/replace-jekyll-with-pandoc-makefile.html
-all: $(addsuffix .html, $(basename $(wildcard $(POSTS)/*.md)))
 
+all: HTML_FILES
 %.html: %.md
 	$(GENERATE) "$<" -o "$@"
 
+
 .PHONY: clean
+# Specify -type f to avoid deleting manually creating
+# symlinks.
 clean:
-	rm -f $(POSTS)/*.html
+	find $(POSTS) -type f -name '*.html' -delete
