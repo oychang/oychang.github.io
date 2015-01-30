@@ -10,7 +10,7 @@ GENERATE   = pandoc \
                 --template templates/post.html
 
 
-all: HTML_FILES
+all: $(HTML_FILES)
 %.html: %.md
 	$(GENERATE) "$<" -o "$@"
 
