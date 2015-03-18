@@ -328,3 +328,37 @@ ykpersonalize -1 -o oath-hotp
 https://developers.yubico.com/yubioath-desktop/
 sudo apt-get install pcscd python-pyscard python-pbkdf2 python-pyside.qtgui
 
+#. Install gnupg2
+#. Install zsh, prezto, enable gpg module
+#. `gpg: WARNING: The GNOME keyring manager hijacked the GnuPG agent.`
+#. https://wiki.archlinux.org/index.php/GNOME_Keyring#Disable_keyring_daemon
+#. gpgconf && install gpgsm
+	* http://www.grant-olson.net/news/2013/03/09/using-openpgp-smartcard-on-ubuntu-12-10.html
+	* scdaemon[3722]: PC/SC OPEN failed: no service (0x8010001d)
+#. add 99-yubikey.rules
+#. ldconfig -p | grep libpcsclite.so
+	#. sudo ln -s /lib/x86_64-linux-gnu/libpcsclite.so.1 /usr/lib/libpcsclite.so
+#. sudo apt remove gnome-keyring
+	#. will remove software center
+* please apt install gnupg2
+* cd ~/Code/password-store && please make install
+* please cp src/completion/pass.zsh-completion /usr/local/share/zsh/site-functions/_pass
+* sudo apt remove gnome-keyring
+* gpg: selecting openpgp failed: Card error
+gpg: OpenPGP card not available: Card error
+*   177  vim gnome-keyring-ssh.desktop
+  178  vim gnome-keyring-gpg.desktop
+  179  pwd
+  180  gpg --card-status
+  181  la
+  182  gpg-agent --daemon
+  183  pkill gpg-agent
+  184  eval $(gpg-agent --daemon)
+  185  ls
+  188  sudo apt install pcscd
+  189  ls /tmp
+  190  gpg2 --card-status
+  192  man history
+  193  man -k history
+* apt-cache rdepends gnome-keyring
+* apt-cache rdepends ubuntu-gnome-desktop -> software-center
