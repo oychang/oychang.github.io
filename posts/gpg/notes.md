@@ -1,81 +1,59 @@
-% GPG with a Yubikey
+% Yubikey for Fun and Profit
 % Oliver Chang
-% 29 January 2015
+% 19 March 2015
 
-# Test
+What do you get when Ubuntu, the [Yubikey NEO](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/), and GPG walk into a bar?
+You get a barfight because fundamentally none of them want to work together.
 
-0. Free (as in beer) software
-1. Setup PGP using best practices
-2. Store website passwords with 2fa
-3. Use SSH with 2fa
-4. Portably sync 2fa codes between the computer and any number of devices
+The Yubikey NEO is a great $60 keychain widget for the recreationally paranoid.
+It implements a hardware [security token](https://en.wikipedia.org/wiki/Security_token) which offers two-factor authentication like Google Authenticator or SMS one-time codes.
 
+Positives:
+- GPG is defacto method of storing data at rest
+- Impossible to brute force
+- Cryptographic operations happen on the Yubikey
+- Easiest way to use GPG
 
-Android, Ubuntu, PGP, SSH
-GPG
-Upfront cost, $60
+Here are some example use cases:
+* SSH Logins: Plugin the NEO, type a PIN, and get authentication thorugh gpg-agent
+* Easier GPG Encryption: Instead of typing a long and complicated (well, hopefully), insert the NEO, type a PIN, and be done with it
+* OTP Codes: get OTP codes on any device with NFC or USB
+* Password management: via password-store and gpg, unlock a password store
+<http://www.passwordstore.org/>
 
-philosophy: probably not completely secure
-slow down* Subkeys
+Now, there are a lot of great posts online about the gpg setup procedure.
+I'm going to go into the hair-pullingly frustrating parts of the software setup.
 
-* Expiration
+Thinkpad T520, 2012 Vintage
+Yubikey NEO purchased on Amazon
+Ubuntu/Xubuntu 14.04/14.10
 
-* Public, private key
+#. Ubuntu/GPG: Setup dependencies
 
-* In case of loss of... laptop, yubikey
-    * No password required for HOTP codes
+#. NEO: Enable the Correct Device Mode
 
-* Distribute public key!
+#. GPG: Generate a public/private key pair
 
-* Revocation certificate!
+#. GPG: Generate subkeys, revocation certificates
 
-```python
-[x for x in xrange(20)]
-set([f for f in xrange(20) if f == 'f'])
-```
+#. GPG: Backup in at least two places
 
-```
-.oh-my-zsh/custom/gpg/gpg.plugin.zsh
-/etc/udev/rc.d/99-yubikey.rules
-```
-
-Probably not a huge deal!
-# Setting up a Yubikey NEO for HOTP and SSH on Ubuntu and Android
-
-`16 January 2015 -- Oliver Chang`
-
-Facts:
-    * want to be able to use as 2nd unclock pass <http://www.passwordstore.org/>
-    http://en.wikipedia.org/wiki/YubiKey
-    * want to use instead of Google Authenticator as HOTP
-    http://en.wikipedia.org/wiki/HMAC-based_One-time_Password_Algorithm
-    * want to use as 2nd factor for SSH passwords
-    * mobily, want to tap and use NFC
-        * should hold passwords
-
-What happens if I lose my YubiKey?
-
-If you are using your YubiKey with a service and/or application, the policy for lost or stolen YubiKeys depends on how the service/application deals with the situation.
-
-The simplest is if the site supports alternative authentication mechanisms, so that you can regain access to the account and can de-associate the lost YubiKey from your account, and associate your new YubiKey to the account.
-
-For example, the LastPass Premium subscription allows users to configure up to 5 YubiKeys with a LastPass account, so they can continue to log in using other keys if one is lost. Read more about it here.
-
-If you cannot regain access, typical sites have an authentication credential recovery mechanism. You would use that to regain access to your account, and to dissociate the YubiKey and then re-associate it again.
-
-Applications/services may also provide other mechanisms for users/administrators to assign a new YubiKey in the case the user lost his/her original key. Please inquire directly to applications or services supporting the YubiKey on their policies.
-
-Please see also our blog post on this topic.
-
+#. ALL: Double check restoration procedures
 https://www.yubico.com/2014/06/lost-yubikey-practices/
 
-* Have to assume manufacturer safety...
+#. GPG: Distribute public key
+
+#. Ubuntu: Setup the correct udev rules
+/etc/udev/rc.d/99-yubikey.rules
+
+#. Ubuntu: Disable gnome-keyring, gpg-agent, ssh-agent from startup
+
+#. Ubuntu: Enable ZSH Plugins
+.oh-my-zsh/custom/gpg/gpg.plugin.zsh
+
+===============================================================================
 
 Viewed as a keyboard device...no drivers required!
-You can test this by opening a text editor and tapping the gold key
-http://demo.yubico.com/start/otp/neo
-flashing green light every three seconds
-
 
 Most wants can be setup through using the YubiKey as an OpenPGP smart card
 https://www.yubico.com/2012/12/yubikey-neo-openpgp/
@@ -231,9 +209,6 @@ sub  2048R/4AEAE370  created: 2015-01-16  expires: 2016-01-16  usage: A
 [ultimate] (1). Oliver Chang <oliver@oychang.com>
 [ultimate] (2)  Oliver Chang <o.chang@umiami.edu>
 
-gpg> %
-
-
 https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it#getting-it-working-on-linux
 
 
@@ -275,24 +250,6 @@ LABEL="u2f_end"
 --- udev/rules.d » sudo tune2fs -l /dev/mapper/ubuntu-root | grep acl
 [sudo] password for ochang:
 Default mount options:    user_xattr acl
---- udev/rules.d » df -h
-Filesystem               Size  Used Avail Use% Mounted on
-/dev/mapper/ubuntu-root  455G  382G   50G  89% /
-none                     4.0K     0  4.0K   0% /sys/fs/cgroup
-udev                     5.8G  4.0K  5.8G   1% /dev
-tmpfs                    1.2G  1.3M  1.2G   1% /run
-none                     5.0M     0  5.0M   0% /run/lock
-none                     5.9G  4.6M  5.9G   1% /run/shm
-none                     100M   44K  100M   1% /run/user
-/dev/sda1                228M   81M  135M  38% /boot
-/home/ochang/.Private    455G  382G   50G  89% /home/ochang
-
---- udev/rules.d » lsb_release -a
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description:    Ubuntu 14.04.1 LTS
-Release:    14.04
-Codename:   trusty
 
 --- udev/rules.d » gpg --change-pin
 
