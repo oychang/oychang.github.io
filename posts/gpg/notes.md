@@ -2,6 +2,10 @@
 % Oliver Chang
 % 19 March 2015
 
+https://vtllf.org/blog/ssh-web-sign-in
+https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856
+http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html
+
 What do you get when Ubuntu, the [Yubikey NEO](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/), and GPG walk into a bar?
 You get a barfight because fundamentally none of them want to work together.
 
@@ -90,7 +94,7 @@ sudo apt remove gnome-keyring
 # http://www.bootc.net/archives/2013/06/09/my-perfect-gnupg-ssh-agent-setup/
 # ^^^ This is amazing ^^^
 # If you're running into problems
-sudo rm -f /
+sudo rm -f /etc/xdg/autostart/gnome-keyring-{gpg,ssh}.desktop
 # Now, the last one or two here might not be necessary
 # But dealing with this shit is super annoying, so eh better safe than sorry
 sudo apt install gnupg2 gnupg-agent gpgsm pcscd libccid
@@ -128,8 +132,23 @@ https://www.yubico.com/2014/06/lost-yubikey-practices/
 https://help.riseup.net/en/security/message-security/openpgp/best-practices#use-the-sks-keyserver-pool-instead-of-one-specific-server-with-secure-connections
 
 #. Ubuntu: Setup the correct udev rules
+
+https://blog.habets.se/2013/02/GPG-and-SSH-with-Yubikey-NEO
+There is a procedure for doing this in the yubikey-personalization repository, but the easier way / a way that I could actually get working is a little simpler and comes via [Thomas Habets's Blog](https://blog.habets.se/2013/02/GPG-and-SSH-with-Yubikey-NEO).
+Namely, we create a file `/etc/udev/rules.d/99-yubikey.rules` to look like
+
+```udevrules
 cd /etc/udev/rules.d
 sudo vim 99-yubikey.rules
+SUBSYSTEM=="usb", ATTR{idVendor}=="1050", ATTR{idProduct}=="0111", OWNER="oychang"
+```
+
+The first three parts are boolean conditions on the device we plugin (these are constants that map to the Yubikey NEO and the last part is the operation to execute for the device.
+You can verify this yourself with `dmesg | tail` after plugging in the Yubikey, or some other arcane unix utility.
+
+
+Note, I think using the plural words as in the blog will also work.
+
 
 #. Ubuntu: Disable gnome-keyring, gpg-agent, ssh-agent from startup
 
