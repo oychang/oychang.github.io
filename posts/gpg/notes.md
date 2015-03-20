@@ -15,6 +15,7 @@ Positives:
 - Easiest way to use GPG
 
 Here are some example use cases:
+* Secure git pushes
 * SSH Logins: Plugin the NEO, type a PIN, and get authentication thorugh gpg-agent
 * Easier GPG Encryption: Instead of typing a long and complicated (well, hopefully), insert the NEO, type a PIN, and be done with it
 * OTP Codes: get OTP codes on any device with NFC or USB
@@ -30,292 +31,145 @@ Ubuntu/Xubuntu 14.04/14.10
 
 #. Ubuntu/GPG: Setup dependencies
 
+Start off with the crown jewel: gpg, the PGP implementation of GNU Privacy Guard.
+Feature-wise, the `gpg` and `gpg2` packages are very similiar.
+They both have up-to-date security patches and both actively maintained.
+Straight from `man`'s mouth, `gpg2` is better suited to desktop use.
+Plus, there was one step in here that gpg can't do as easily.
+One drawback is that zsh completions do not automatically kick in for `gpg2`.
+
+Optional, but I am using the [Z Shell](http://www.zsh.org/) with [Sorin Ionescu's prezto](https://github.com/sorin-ionescu/prezto).
+Nothing about the other software we use _requires_ that you use zsh.
+But, there is an excellent [GPG script](https://github.com/sorin-ionescu/prezto/blob/master/modules/gpg/init.zsh) that simplifies a lot of the hassle of environment variables.
+I know this script can easily be ported to a normal zsh script for users of
+oh-my-zsh, and I imagine it is also rewritable to satisfy Bash.
+
+In my `.zshrc`, I have the following directives:
+
+```
+# make it less tempting to use different versions of gpg
+alias gpg=gpg2
+# some options are slightly different/non-existant in gpg...be warned
+compdef gpg2=gpg
+```
+
+We need to compile the [ykpersonalize](https://github.com/Yubico/yubikey-personalization) tool to change the mode from the default.
+The `README.adoc` file is pretty spot on, but the gist is
+
+```bash
+# side note, is there a reason nobody uses the `apt` command?
+# it's the best!
+sudo apt install libyubikey-dev pkg-config libusb-1.0.0-dev git
+git clone git://github.com/Yubico/yubikey-personalization.git
+cd yubikey-personalization
+autoreconf --install
+./configure
+sudo make check install
+# note, this step is important to avoid the error
+# ykinfo: error while loading shared libraries: libykpers-1.so.1: cannot open shared object file
+sudo ldconfig
+# If this does not work, two possibilities:
+#   1) Device did not connect properly...check `dmesg | tail` for something like
+# [37818.368240] usb 2-1.2: New USB device found, idVendor=1050, idProduct=0111
+# [37818.368252] usb 2-1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+# [37818.368259] usb 2-1.2: Product: Yubikey NEO OTP+CCID
+#   2) The current user cannot access the device. Either run via `sudo` or check
+#      the section below on udev rules.
+ykpersonalize -m82
+# now reboot the card (unplug and plug) to have the new mode kick in
+```
+We say `-m82` not because the year of the Falklands War is critical to hardware tokens,
+but because it is the flags `0x2 | 0x80` which means that we want to enable
+OTP mode, CCID (smartcard) mode, and use the `MODE_FLAG_EJECT` flag.
+You could probably also choose `-m81` or `-m86` if you felt like it (check `man ykpersonlize` to decide which mode is best for you).
+
+```bash
+# nb, this removes ubuntu-gnome-desktop which removes software-center
+# if you need these (I seem to get by fine without), this step is probably not necessary
+sudo apt remove gnome-keyring
+# http://www.bootc.net/archives/2013/06/09/my-perfect-gnupg-ssh-agent-setup/
+# ^^^ This is amazing ^^^
+# If you're running into problems
+sudo rm -f /
+# Now, the last one or two here might not be necessary
+# But dealing with this shit is super annoying, so eh better safe than sorry
+sudo apt install gnupg2 gnupg-agent gpgsm pcscd libccid
+```
+
+```bash
+# http://askubuntu.com/questions/20783/how-is-the-tmp-directory-cleaned-up
+# TMPTIME=0 to clear on reboot
+sudo vim /etc/default/rcS
+
+ldconfig -p | grep libpcsclite.so
+sudo ln -s /lib/x86_64-linux-gnu/libpcsclite.so.1 /usr/lib/libpcsclite.so
+gpgconf --check-programs
+```
+
 #. NEO: Enable the Correct Device Mode
 
-#. GPG: Generate a public/private key pair
+#. GPG: Generate a public/private key pair, subkeys, revocation
 
-#. GPG: Generate subkeys, revocation certificates
+http://spin.atomicobject.com/2013/11/24/secure-gpg-keys-guide/
 
 #. GPG: Backup in at least two places
+
+* If lose Yubikey
+* If lose private key
+* If close to expire
+* If lose laptop
+http://www.jabberwocky.com/software/paperkey/
 
 #. ALL: Double check restoration procedures
 https://www.yubico.com/2014/06/lost-yubikey-practices/
 
 #. GPG: Distribute public key
 
+https://help.riseup.net/en/security/message-security/openpgp/best-practices#use-the-sks-keyserver-pool-instead-of-one-specific-server-with-secure-connections
+
 #. Ubuntu: Setup the correct udev rules
-/etc/udev/rc.d/99-yubikey.rules
+cd /etc/udev/rules.d
+sudo vim 99-yubikey.rules
 
 #. Ubuntu: Disable gnome-keyring, gpg-agent, ssh-agent from startup
 
+If
+- `$SSH_AUTH_SOCK`
+- `$GPG_AGENT_INFO`
+
+are set, this is a problem
+
 #. Ubuntu: Enable ZSH Plugins
-.oh-my-zsh/custom/gpg/gpg.plugin.zsh
 
-===============================================================================
+Add a `gpg` line to your `~/.zpreztorc`.
+Given you keep the defaults, it should look a little like
 
-Viewed as a keyboard device...no drivers required!
+```bash
+...
+# Set the Prezto modules to load (browse modules).
+# The order matters.
+zstyle ':prezto:load' pmodule \
+  'environment' \
+  'terminal' \
+  'editor' \
+  'history' \
+  'directory' \
+  'spectrum' \
+  'utility' \
+  'completion' \
+  'prompt' \
+  'gpg'
+...
+```
 
-Most wants can be setup through using the YubiKey as an OpenPGP smart card
-https://www.yubico.com/2012/12/yubikey-neo-openpgp/
+cd ~/Code/password-store && sudo make install
+sudo apt install pwgen xclip autoconf
+sudo cp src/completion/pass.zsh-completion /usr/local/share/zsh/site-functions/_pass
 
-http://finninday.net/wiki/index.php/Yubikey#install_yubikey_utilities_and_libraries
-On Ubuntu, download
+#. Add OTP through the computer
 
-download both
-    tar.gz and tar.gz.sig
-    https://launchpad.net/+help-registry/verify-downloads.html
-    http://www.cyberciti.biz/tips/howto-verify-integrity-of-the-tar-balls-with-gpg-command.html
-    in short,
-        my gpg is already setup from using pass...ymmv
-        probably have to do some init voodoo
-
-        --- Downloads/chrome » gpg --decrypt ykpers-1.16.0.tar.gz.sig
-        gpg: Signature made Fri 26 Sep 2014 03:47:22 AM EDT using RSA key ID B2168C0A
-        gpg: Can't check signature: public key not found
-
-        http://explainshell.com/explain?cmd=gpg+--fingerprint
-
-        --- Downloads/chrome » gpg --keyserver pgpkeys.mit.edu --recv-key B2168C0A
-        gpg: requesting key B2168C0A from hkp server pgpkeys.mit.edu
-        gpg: key B2168C0A: public key "Klas Lindfors <klas@yubico.com>" imported
-        gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-        gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-        gpg: Total number processed: 1
-        gpg:               imported: 1  (RSA: 1)
-
-        http://explainshell.com/explain?cmd=gpg+--fingerprint
-        --- Downloads/chrome » gpg --fingerprint B2168C0A
-        pub   2048R/B2168C0A 2013-11-29 [expires: 2015-05-19]
-              Key fingerprint = 0A3B 0262 BCA1 7053 07D5  FF06 BCA0 0FD4 B216 8C0A
-        uid                  Klas Lindfors <klas@yubico.com>
-        sub   2048R/561F9ECF 2013-11-29 [expires: 2015-05-19]
-        sub   2048R/233B994C 2013-11-29 [expires: 2015-05-19]
-
-        date of pgp is not suspicious
-
-        https://www.yubico.com/about/team/
-        Senior Software Developer
-        https://launchpad.net/~klali
-        OpenPGP keys: 9D1C0E79, B2168C0A
-        https://launchpad.net/~yubico/+archive/ubuntu/stable
-        https://github.com/Yubico
-        listed under people
-        http://pgpkeys.mit.edu/pks/lookup?op=vindex&search=0xBCA00FD4B2168C0A
-        https://github.com/Yubico/yubikey-personalization/blob/master/Makefile.am
-
-        can assume that this key is valid
-
-        --- Downloads/chrome » gpg --verify ykpers-1.16.0.tar.gz.sig ykpers-1.16.0.tar.gz
-        gpg: Signature made Fri 26 Sep 2014 03:47:22 AM EDT using RSA key ID B2168C0A
-        gpg: Good signature from "Klas Lindfors <klas@yubico.com>"
-        gpg: WARNING: This key is not certified with a trusted signature!
-        gpg:          There is no indication that the signature belongs to the owner.
-        Primary key fingerprint: 0A3B 0262 BCA1 7053 07D5  FF06 BCA0 0FD4 B216 8C0A
-
-        --- Downloads/chrome » gpg --lsign-key B2168C0A
-
-        pub  2048R/B2168C0A  created: 2013-11-29  expires: 2015-05-19  usage: SC
-                             trust: unknown       validity: unknown
-        sub  2048R/561F9ECF  created: 2013-11-29  expires: 2015-05-19  usage: E
-        sub  2048R/233B994C  created: 2013-11-29  expires: 2015-05-19  usage: A
-        [ unknown] (1). Klas Lindfors <klas@yubico.com>
-
-
-        pub  2048R/B2168C0A  created: 2013-11-29  expires: 2015-05-19  usage: SC
-                             trust: unknown       validity: unknown
-         Primary key fingerprint: 0A3B 0262 BCA1 7053 07D5  FF06 BCA0 0FD4 B216 8C0A
-
-             Klas Lindfors <klas@yubico.com>
-
-        This key is due to expire on 2015-05-19.
-        Are you sure that you want to sign this key with your
-        key "Oliver Chang <oliver@oychang.com>" (FBBC4501)
-
-        The signature will be marked as non-exportable.
-
-        Really sign? (y/N) y
-
-        You need a passphrase to unlock the secret key for
-        user: "Oliver Chang <oliver@oychang.com>"
-        2048-bit RSA key, ID FBBC4501, created 2014-12-09
-
-
-        --- Downloads/chrome » gpg --verify ykpers-1.16.0.tar.gz.sig ykpers-1.16.0.tar.gz
-        gpg: Signature made Fri 26 Sep 2014 03:47:22 AM EDT using RSA key ID B2168C0A
-        gpg: checking the trustdb
-        gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-        gpg: depth: 0  valid:   1  signed:   1  trust: 0-, 0q, 0n, 0m, 0f, 1u
-        gpg: depth: 1  valid:   1  signed:   0  trust: 1-, 0q, 0n, 0m, 0f, 0u
-        gpg: next trustdb check due at 2015-05-19
-        gpg: Good signature from "Klas Lindfors <klas@yubico.com>"
-
-
-sudo apt-get install libyubikey-dev libusb-1.0-0-dev libjson0-dev
-http://yubico.github.io/yubikey-personalization/releases.html
-untar
-cd, ./configure
-sudo make check install
-
-ykinfo: error while loading shared libraries: libykpers-1.so.1: cannot open shared object file: No such file or directory
-
-sudo ldconfig
-ykpersonalize -m82
-reboot key
-
-sudo gpg --card-edit
-
---- Downloads/chrome » sudo gpg --card-edit
-[sudo] password for ochang:
-gpg: WARNING: unsafe ownership on configuration file `/home/ochang/.gnupg/gpg.conf'
-
-because running as root, even though
-
---- Downloads/chrome » ls -ld /home/ochang/.gnupg && ls -l /home/ochang/.gnupg/gpg.conf
-drwx------ 2 ochang ochang 4096 Jan 15 20:22 /home/ochang/.gnupg
--rw------- 1 ochang ochang 9398 Feb  3  2013 /home/ochang/.gnupg/gpg.conf
-
-ctrl d to exit
-
-pwd
-    /home/ochang/.password-store
-find . -name '*.gpg' -exec gpg --batch --quiet --output {}.txt --decrypt {} \;
-mkdir ~/export
-find -name '*.gpg.txt' -exec cp --target-directory=/home/ochang/export {} +
-cd ~/export && ls
-rm -rf ~/.password-store
-# delete all (secret) keys
-rm -rf ~/.gnupg
-
-sudo apt-get install gnupg-agent
-
-https://wiki.archlinux.org/index.php/GnuPG
-personal-digest-preferences SHA512
-cert-digest-algo SHA512
-default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
-personal-cipher-preferences TWOFISH CAMELLIA256 AES 3DES
-
-https://wiki.archlinux.org/index.php/GnuPG
-http://spin.atomicobject.com/2013/11/24/secure-gpg-keys-guide/
-https://we.riseup.net/riseuplabs+paow/openpgp-best-practices
-
---- udev/rules.d » gpg --expert --edit-key oliver@oychang.com
-Secret key is available.
-
-pub  4096R/212554DF  created: 2015-01-16  expires: 2017-01-15  usage: C
-                     trust: ultimate      validity: ultimate
-sub  2048R/7253FCFE  created: 2015-01-16  expires: 2016-01-16  usage: S
-sub  2048R/97C99385  created: 2015-01-16  expires: 2016-01-16  usage: E
-sub  2048R/4AEAE370  created: 2015-01-16  expires: 2016-01-16  usage: A
-[ultimate] (1). Oliver Chang <oliver@oychang.com>
-[ultimate] (2)  Oliver Chang <o.chang@umiami.edu>
-
-https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it#getting-it-working-on-linux
-
-
---- udev/rules.d » pwd
-/etc/udev/rules.d
---- udev/rules.d » cat 70-yubikey.rules
-ACTION!="add|change", GOTO="u2f_end"
-
-KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0111", TAG+="uaccess"
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0111", TAG+="uaccess"
-
-LABEL="u2f_end"
-
-
-http://www.jabberwocky.com/software/paperkey/
- gpg --recv-key A1BC4FA4
-10047  gpg --verify paperkey-1.3.tar.gz.sig paperkey-1.3.tar.gz
-10048  untar paperkey-1.3.tar.gz
-10050  cd paperkey-1.3
-10052  vim README
-10053* lpr
-10054* man lpr
-10056  ./configure
-10057  vim config.s
-10058  vim config.status
-10059  make check
-10060  make install
-10061  sudo make install
-10063  paperkey
-10064  man paperkey
-
---- udev/rules.d » cat 70-yubikey.rules
-ACTION!="add|change", GOTO="u2f_end"
-
-KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0111", TAG+="uaccess"
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1050", ATTRS{idProduct}=="0111", TAG+="uaccess"
-
-LABEL="u2f_end"
---- udev/rules.d » sudo tune2fs -l /dev/mapper/ubuntu-root | grep acl
-[sudo] password for ochang:
-Default mount options:    user_xattr acl
-
---- udev/rules.d » gpg --change-pin
-
-8 chars
-1 - change PIN
-2 - unblock PIN
-3 - change Admin PIN
-4 - set the Reset Code
-
-not use paperkey
-
-sudo apt-get install gpg2
-sudo apt-get install libccid pcscd scdaemon libksba8
-http://blog.josefsson.org/2014/06/23/offline-gnupg-master-key-and-subkeys-on-yubikey-neo-smartcard/
-https://developers.yubico.com/ykneo-openpgp/KeyImport.html
-
-url, use an http
-
-gpg/card> fetch
-gpg: requesting key 7253FCFE from https server oychang.com
-gpgkeys: protocol `https' not supported
-gpg: no handler for keyserver scheme `https'
-
-
-http://www.bootc.net/archives/2013/06/09/my-perfect-gnupg-ssh-agent-setup/
---- ~/Desktop » echo $SSH_AUTH_SOCK
-/tmp/gpg-ach2mj/S.gpg-agent.ssh
-
+Android apps are shit.
+They are effectively read-only.
 
 ykpersonalize -1 -o oath-hotp
-
-
-https://developers.yubico.com/yubioath-desktop/
 sudo apt-get install pcscd python-pyscard python-pbkdf2 python-pyside.qtgui
-
-#. Install gnupg2
-#. Install zsh, prezto, enable gpg module
-#. `gpg: WARNING: The GNOME keyring manager hijacked the GnuPG agent.`
-#. https://wiki.archlinux.org/index.php/GNOME_Keyring#Disable_keyring_daemon
-#. gpgconf && install gpgsm
-	* http://www.grant-olson.net/news/2013/03/09/using-openpgp-smartcard-on-ubuntu-12-10.html
-	* scdaemon[3722]: PC/SC OPEN failed: no service (0x8010001d)
-#. add 99-yubikey.rules
-#. ldconfig -p | grep libpcsclite.so
-	#. sudo ln -s /lib/x86_64-linux-gnu/libpcsclite.so.1 /usr/lib/libpcsclite.so
-#. sudo apt remove gnome-keyring
-	#. will remove software center
-* please apt install gnupg2
-* cd ~/Code/password-store && please make install
-* please cp src/completion/pass.zsh-completion /usr/local/share/zsh/site-functions/_pass
-* sudo apt remove gnome-keyring
-* gpg: selecting openpgp failed: Card error
-gpg: OpenPGP card not available: Card error
-*   177  vim gnome-keyring-ssh.desktop
-  178  vim gnome-keyring-gpg.desktop
-  179  pwd
-  180  gpg --card-status
-  181  la
-  182  gpg-agent --daemon
-  183  pkill gpg-agent
-  184  eval $(gpg-agent --daemon)
-  185  ls
-  188  sudo apt install pcscd
-  189  ls /tmp
-  190  gpg2 --card-status
-  192  man history
-  193  man -k history
-* apt-cache rdepends gnome-keyring
-* apt-cache rdepends ubuntu-gnome-desktop -> software-center
