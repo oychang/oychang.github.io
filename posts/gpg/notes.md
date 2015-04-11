@@ -95,6 +95,7 @@ sudo apt remove gnome-keyring
 # ^^^ This is amazing ^^^
 # If you're running into problems
 sudo rm -f /etc/xdg/autostart/gnome-keyring-{gpg,ssh}.desktop
+sudo rm -f /usr/share/upstart/sessions/gpg-agent.conf
 # Now, the last one or two here might not be necessary
 # But dealing with this shit is super annoying, so eh better safe than sorry
 sudo apt install gnupg2 gnupg-agent gpgsm pcscd libccid
