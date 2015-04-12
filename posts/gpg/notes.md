@@ -1,8 +1,33 @@
-% Yubikey for Fun and Profit
-% Oliver Chang
-% 19 March 2015
+**Problem**: Remembering passwords is a huge pain in the ass but a requirement to not have all your money stolen
 
-https://vtllf.org/blog/ssh-web-sign-in
+**Solution**: [2-Factor Authentication (2FA)](https://en.wikipedia.org/wiki/Multi-factor_authentication) means you can keep using your birthday (June 4, 1994 at Tampa General Hospital for me, if you also want to take a shot at going through the backdoor of asinine "Security Questions") as your password while you get to keep all your money.
+
+2FA works reasonably well for most non-Snowdens by generating unique, short PIN codes that come in many forms like text messages, [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2), or RSA Tokens. However, this approach involves trusting that all the systems involved in delivering the text message to you (cell towers, server, internet pipes, phone hardware, OS manufacturer, text messaging apps), or the code of Google Authenticator (open source, but hard to tell if what you see in code is what you get on Google Play), or the companies who made the keys in the first place (RSA [scandalously failed](https://en.wikipedia.org/wiki/RSA_SecurID#March_2011_system_compromise) on this count).
+
+Bruce Schneier, a cryptogropher whose claim to fame is having a hard-to-spell last name, promulgates the idea that security is not a dichotomy, but a spectrum that becomes more of a pain-in-the-ass the further right you go:
+
+> If you look at security from economic terms, it's a trade-off.
+> Every time you get some security, you're always trading off something.
+> You're going to trade off something, either money or time, convenience, capabilities, maybe fundamental liberties.
+> And the question to ask when you look at a security anything is not whether this makes us safer, but whether it's worth the trade-off.
+> - [Bruce Schneier, _The security image_](https://www.ted.com/talks/bruce_schneier/transcript?language=en) (trigger warning: TED talk)
+
+To quantify this, Bonneau et al in [The Quest to Replace Passwords (PDF)](http://research.microsoft.com/pubs/161585/QuestToReplacePasswords.pdf) devised this table to compare various schemes against the historical gold standard.
+
+![Compare and Contrast of Ease-of-Use in Authentication](https://raw.githubusercontent.com/oychang/oychang.github.io/master/posts/gpg/authentication-tradeoffs-table.png)
+
+The whole spectrum is represented here, most of the suspects familiar. Facebook Connect is what you use on websites to Just Get It To Work without remembering a different password. But who would trust Facebook Connect with their banking login? 
+
+Biometric authentication? Cool in spy movies where they do the thing with the eye and the voice and sometimes the eye stealing thing, cool in the iPhone, but generally a [dangerously insecure](http://arstechnica.com/apple/2013/09/chaos-computer-club-hackers-trick-apples-touchid-security-feature/) pain in the ass.
+
+Then, the most green cells occur in multifactor authentication schemes. We'll setup a Yubikey NEO of the clan Hardware Tokens for the rest of this article. 
+
+# Something Pretty Good
+
+https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it
+https://en.wikipedia.org/wiki/Pretty_Good_Privacy
+https://xkcd.com/1181/
+
 https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856
 http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html
 
