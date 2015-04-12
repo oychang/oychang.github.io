@@ -24,43 +24,21 @@ Then, the most green cells occur in multifactor authentication schemes. We'll se
 
 # Something Pretty Good
 
-https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it
-https://en.wikipedia.org/wiki/Pretty_Good_Privacy
-https://xkcd.com/1181/
+The [Neo](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/), the chosen one, is the Bentley of hardware tokens. It is a dongle that connects via USB, has HOTP via NFC on your phone or USB (an arguably more secure flavor than Google Authenticator since the codes are stored on the Neo), [FIDO U2F](https://fidoalliance.org/about/overview/) ([see: gushing praise](https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it)), and most importantly a programmable SmartCard (more specifically, a [Common Criteria, JavaCard element](https://lwn.net/Articles/618888/)). The SmartCard is important because it means all cryptography operations happen on the actual donggle on a chip slathered with resin.
 
-https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856
-http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html
+The SmartCard allows us to use a [Pretty Good Privacy (PGP)](https://en.wikipedia.org/wiki/Pretty_Good_Privacy) public key/private key system. The belle of the PGP implementation ball is GPG, widely available and considered very reliable. PGP is the [de facto](http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html) method of storing data at rest which we will use to store passwords via the excellent [password store](http://www.passwordstore.org/). So now we have a system where to login you need three things: (a) the public key, (b) the private key (and the encryption subkey...more on this later), and (c) the passphrase to unlock the the keychain. The Neo is great because it holds onto (b) and (c) while requiring a short, impossible to brute-force PIN to unlock. In addition to encryption, we can also use PGP for authentication, which we will use to securely SSH with the same PIN.
 
-What do you get when Ubuntu, the [Yubikey NEO](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/), and GPG walk into a bar?
-You get a barfight because fundamentally none of them want to work together.
+# Setup
 
-The Yubikey NEO is a great $60 keychain widget for the recreationally paranoid.
-It implements a hardware [security token](https://en.wikipedia.org/wiki/Security_token) which offers two-factor authentication like Google Authenticator or SMS one-time codes.
+The setup process is not for the faint of heart. There are active [bugs](https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856) that make it far less than a plug-and-play experience on Ubuntu. But if you've made it this far you're at least [recreationally paranoid](https://xkcd.com/1181/) enough to know your way around a command line. Here are some specifics about my setup, but there should be no hardware quirks since the Yubikey looks like two things to the OS: a CCID device and a USB keyboard.
 
-Positives:
-- GPG is defacto method of storing data at rest
-- Impossible to brute force
-- Cryptographic operations happen on the Yubikey
-- Easiest way to use GPG
+- Laptop: 2012 Thinkpad T520
+- Device: [Yubikey NEO](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/)
+- Operating System: Ubuntu/Xubuntu 14.04/14.10
 
-Here are some example use cases:
-* Secure git pushes
-* SSH Logins: Plugin the NEO, type a PIN, and get authentication thorugh gpg-agent
-* Easier GPG Encryption: Instead of typing a long and complicated (well, hopefully), insert the NEO, type a PIN, and be done with it
-* OTP Codes: get OTP codes on any device with NFC or USB
-* Password management: via password-store and gpg, unlock a password store
-<http://www.passwordstore.org/>
+# Step 1: Setup dependencies
 
-Now, there are a lot of great posts online about the gpg setup procedure.
-I'm going to go into the hair-pullingly frustrating parts of the software setup.
-
-Thinkpad T520, 2012 Vintage
-Yubikey NEO purchased on Amazon
-Ubuntu/Xubuntu 14.04/14.10
-
-#. Ubuntu/GPG: Setup dependencies
-
-Start off with the crown jewel: gpg, the PGP implementation of GNU Privacy Guard.
+Start off with the crown jewel: gpg.
 Feature-wise, the `gpg` and `gpg2` packages are very similiar.
 They both have up-to-date security patches and both actively maintained.
 Straight from `man`'s mouth, `gpg2` is better suited to desktop use.
