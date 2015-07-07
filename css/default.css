@@ -1,5 +1,5 @@
 body {
-  max-width: 45em;
+  max-width: 55em;
   margin: 0 auto;
   padding: 1em;
 }
@@ -14,5 +14,5 @@ body {
 /* Derived from .information-block's -webkit-padding-start: 40px */
 .information-block h5 { padding-left: 23px; }
 /* Identical to .information-block h5's -webkit-margin-before */
-.information-block ul { margin-bottom: 1.67em; }
+.information-block ul { margin-bottom: 1.67em; padding: 0 40px; }
 .information-block ul li { list-style-type: circle; }
