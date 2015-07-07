@@ -6,3 +6,11 @@ body {
 .text-centered { text-align: center; }
 .text-italic { font-style: italic; }
 .content { padding-top: 1em; }
+
+.gradient-one { background-color: #AEB4B4; }
+.gradient-two { background-color: #9BA09F; }
+.gradient-three { background-color: #848A8B; }
+/* Derived from .information-block's -webkit-padding-start: 40px */
+.information-block h5 { padding-left: 23px; }
+/* Identical to .information-block h5's -webkit-margin-before */
+.information-block ul { margin-bottom: 1.67em; }
