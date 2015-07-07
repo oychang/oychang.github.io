@@ -3,6 +3,9 @@ body {
   margin: 0 auto;
   padding: 1em;
 }
+h1, h2, h3, h4, h5, h6, a {
+    font-family: 'Droid Sans', sans-serif;
+}
 
 .text-centered { text-align: center; }
 .text-italic { font-style: italic; }
