@@ -3,6 +3,7 @@ body {
   margin: 0 auto;
   padding: 1em;
 }
+
 .text-centered { text-align: center; }
 .text-italic { font-style: italic; }
 .content { padding-top: 1em; }
@@ -14,3 +15,4 @@ body {
 .information-block h5 { padding-left: 23px; }
 /* Identical to .information-block h5's -webkit-margin-before */
 .information-block ul { margin-bottom: 1.67em; }
+.information-block ul li { list-style-type: circle; }
