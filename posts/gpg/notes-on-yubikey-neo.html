@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>An Accurate Guide to Yubikey GPG Wizardry</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <style>
+  body { margin: 0; font-family: "Droid Sans",sans-serif; }
+  .content { margin: 0 auto; max-width: 65em; }
+  body div { height: 100%; }
+  img { max-height: 100%; max-width: 100%; }
+  blockquote { padding: 0 2em; font-style: italic; font-size: 11pt; }
+  li { list-style-type: circle; }
+  
+  #header { margin: 0.5em; background-color: slategray; }
+  .title {
+      color: rebeccapurple;
+      max-width: 65rem;
+      margin: 0 auto;
+      padding: 1em .5em;
+      text-align: center;
+      font-size: 2.3em;
+      font-family: "Impact","Droid Sans",sans-serif;
+      text-transform: uppercase; }
+  .title span {
+      -webkit-animation: colorRotate 6s linear 0s infinite;
+       -moz-animation: colorRotate 6s linear 0s infinite;
+         -o-animation: colorRotate 6s linear 0s infinite;
+            animation: colorRotate 6s linear 0s infinite; }
+  #subheader {
+    font-family: monospace;
+    text-align: center; }
+  .r-img-inline .figure:nth-child(2) {
+      display: inline;
+      float: right;
+      margin-left: 1em; }
+  .figure img { display: block; margin: 0 auto; }
+  .caption {
+      margin: 0.5em;
+      font-size: 8pt;
+      font-style: italic;
+      text-align: right; }
+  .section { font-size: 12pt; clear: both; margin: 0; padding: 0.4em; }
+  .section > p, .section dl { padding: 0.5em 2em; }
+  .section dt { font-weight: bold; }
+  .section dd {
+      font-style: italic;
+      margin-left: 1em;
+      padding-left: 0.5em;
+      border-left: 3px solid gray; }
+  .section ul { padding-right: 2em; }
+  div.sourceCode {
+      font-size: 10pt;
+      background-color: #fff;
+      border-left: dotted black 1pt;
+      border-right: dotted black 1pt; }
+  pre.sourceCode { margin: 1em; }
+  
+  
+  .winter-forest { background-color: #e8e8e8; }
+  .winter-forest h1,
+  .winter-forest h2,
+  .winter-forest h3,
+  .winter-forest h4,
+  .winter-forest h5,
+  .winter-forest h6 {
+      color: #e8e8e8;
+      background-color: #2a2a2a; }
+  
+  .banana { background-color: #d9c8a5; }
+  .banana h1,
+  .banana h2,
+  .banana h3,
+  .banana h4,
+  .banana h5,
+  .banana h6 {
+      color: #d9c8a5;
+      background-color: #ab8822; }
+  
+  .turda { background-color: #bbb8aa; }
+  .turda h1,
+  .turda h2,
+  .turda h3,
+  .turda h4,
+  .turda h5,
+  .turda h6 {
+      color: #bbb8aa;
+      background-color: #3e7082; }
+  
+  .xkcd { background-color: #fff; }
+  .xkcd h1,
+  .xkcd h2,
+  .xkcd h3,
+  .xkcd h4,
+  .xkcd h5,
+  .xkcd h6 {
+      color: #fff;
+      background-color: #000; }
+  
+  
+  @-webkit-keyframes colorRotate {
+      from { color: rgb(255, 0, 0); }
+      16.6% { color: rgb(255, 0, 255); }
+      33.3% { color: rgb(0, 0, 255); }
+      50% { color: rgb(0, 255, 255); }
+      66.6% { color: rgb(0, 255, 0); }
+      83.3% { color: rgb(255, 255, 0); }
+      to { color: rgb(255, 0, 0); } }
+  
+  @-moz-keyframes colorRotate {
+      from { color: rgb(255, 0, 0); }
+      16.6% { color: rgb(255, 0, 255); }
+      33.3% { color: rgb(0, 0, 255); }
+      50% { color: rgb(0, 255, 255); }
+      66.6% { color: rgb(0, 255, 0); }
+      83.3% { color: rgb(255, 255, 0); }
+      to { color: rgb(255, 0, 0); } }
+  
+  @-o-keyframes colorRotate {
+      from { color: rgb(255, 0, 0); }
+      16.6% { color: rgb(255, 0, 255); }
+      33.3% { color: rgb(0, 0, 255); }
+      50% { color: rgb(0, 255, 255); }
+      66.6% { color: rgb(0, 255, 0); }
+      83.3% { color: rgb(255, 255, 0); }
+      to { color: rgb(255, 0, 0); } }
+  
+  @keyframes colorRotate {
+      from { color: rgb(255, 0, 0); }
+      16.6% { color: rgb(255, 0, 255); }
+      33.3% { color: rgb(0, 0, 255); }
+      50% { color: rgb(0, 255, 255); }
+      66.6% { color: rgb(0, 255, 0); }
+      83.3% { color: rgb(255, 255, 0); }
+      to { color: rgb(255, 0, 0); } }
+  
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">An Accurate Guide to Yubikey GPG Wizardry</h1>
+</div>
+<div id="subheader">
+<p><a href="https://oychang.com/">Home</a> -- <time datetime="2015-07-13">July 13, 2015</time> -- <a href="https://github.com/oychang/oychang.github.io/tree/master/posts/gpg/notes-on-yubikey-neo.md">Suggest Edits</a></p>
+</div>
+<script type="text/javascript">
+(function () {
+  'use strict';
+  var DURATION = 6;
+  var heading = document.getElementById("header").children[0];
+  var title = heading.textContent;
+  var hueChange = Math.floor(360 / title.length);
+
+  heading.innerText = "";
+  var newHTML = "";
+  for (var i in title) {
+    var c = title[i];
+    var delay = (DURATION * ((i * hueChange) % 360) / 360) - DURATION + 's';
+    var attrs = [
+      'color: hsl(' + (i * hueChange) + ', 100%, 50%)',
+      'animation-delay: ' + delay,
+      '-webkit-animation-delay: ' + delay,
+      '-moz-animation-delay: ' + delay,
+      '-o-animation-delay: ' + delay,
+    ];
+    attrs = attrs.join(";");
+
+    newHTML += '<span style="' + attrs + '">' + c + '</span>';
+  }
+  heading.innerHTML = newHTML;
+
+})();
+</script>
+<div class="content">
+<div class="banana section r-img-inline">
+<h1 id="introduction">Introduction</h1>
+<div class="figure">
+<img src="images/size_comparison.png" alt="Size Comparison of Various Hardware Tokens; own work; CC BY 4.0" />
+<p class="caption">Size Comparison of Various Hardware Tokens; own work; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+</div>
+<p>The <a href="https://www.yubico.com/products/yubikey-hardware/yubikey-neo/">Yubikey NEO</a> is a key-sized device that provides an additional &quot;multi-factor&quot; level of security to normal passwords that can be accessed via USB or <acronym title="Near Field Communication">NFC</acronym>, as well as a powerful embedded <acronym title="GNU Privacy Guard">GPG</acronym> SmartCard for use with the <acronym title="Pretty Good Privacy">PGP</acronym> system of public-key cryptography.</p>
+<p>Pictured above are two alternatives to the hardware token approach to multifactor authentication. To use multifactor authentication the process is generally to require a second prompt after putting in your password that requires you to type in the <a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">time-based one-time password</a> that the token spits out.</p>
+<p>The most common implementation of <acronym title="Time-based One-Time Password">TOTP</acronym>, <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a>, isn't even pictured--it's implemented in software rather than hardware, the tradeoff being you trust the Authenticator code and Android system to be secure instead of carrying around a token for each site you care about (tokens are <em>not</em> small). Hence the allure of the NEO: the TOTP data is stored and calculated on the key and you only have to trust the device you use to read the code for independent thirty second intervals.</p>
+<p>The NEO is probably the most featureful hardware token you can buy: it is small, supports Windows, Mac, Linux, Android, <acronym title="Fast IDentity Online Universal 2nd Factor">FIDO U2F</acronym>, One-Time Passwords, HMAC-based One-Time Passwords, Time-based One-Time Passwords, HMAC-SHA1 Challange-Response, OpenPGP, Static Passwords, and SmartCards. This page describes the terrible, horrible, no good, very painful setup process for modern versions of the GPG SmartCard on Ubuntu and applications in SSH Authentication, File Storage, and OTP.</p>
+<h5 id="asides">Asides</h5>
+<dl>
+<dt>How is the TOTP implemented?</dt>
+<dd>The NEO does not contain a power source. You need a Python application on a computer or an Yubico Android application to read the TOTP. <a href="http://www.yubico.com/wp-content/uploads/2014/02/Yubico-TOTP-Setup.pdf">From Yubico,</a> the high-level description is to use &quot;a Challenge/Response configuration to the YubiKey in HMAC-SHA1 mode using the shared OATH secret from the site or service to be secured. The helper app (YubiTOTP) passes the current system time as a challenge to the YubiKey and processes the response as per the OATH specification to generate a 6 or 8 digit OATH-TOTP code.&quot;
+</dd>
+<dt>Could TOTP data be stolen by as you walk around?</dt>
+<dd>Yes, but unlikely. The token stores the label and secret and those can be accessed from any device without authentication. In practice on a Moto X and Nexus 7, you need to memorize the location of the NFC antenna and align both the antenna the key to read the TOTPs. To steal data surreptitiously at distance would require <a href="http://physics.stackexchange.com/questions/44037/why-is-near-field-communication-nfc-range-limited-to-about-20cm">an infeasibly large antenna.</a> To steal a TOTP code in-person by picking the NEO up off of a desk would be trivially easy.
+</dd>
+<dt>Are they durable?</dt>
+<dd>Surprisingly so! The 7-month year old NEO pictured above usually dangles off of a laptop port on a keychain sporting maybe a half-dozen keys while not in-pocket or plugged into an exposed motorcycle keyhole in rainy Florida.
+</dd>
+</dl>
+</div>
+<!-- *********************************************************************** -->
+<div class="winter-forest section">
+<h1 id="effectiveness">Effectiveness</h1>
+<div class="figure">
+<img src="images/bulge.jpg" alt="Battle of the Bulge; public domain" />
+<p class="caption"><a href="https://en.wikipedia.org/wiki/File:Battle_of_the_Bulge.jpg">Battle of the Bulge</a>; public domain</p>
+</div>
+<p>If 20th century France was anything at all like Imperial Japan, the obituaries of May 1940 would likely include the seppuku of André Maginot, champion of the &quot;impenetrable&quot; Maginot Line. (Though on the plus side there would be far more samurai in classic French cinema.) I imagine the Yubikey as similar: it definitely makes you less vulnerable to certain password attacks (common), but it is not a panacea because there are innumerable other vulnerabilities if you're a target ranging from improper use in practice like leaving the key around to software vulnerabilities to <a href="https://en.wikipedia.org/wiki/Van_Eck_phreaking">Van Eck phreaking</a>.</p>
+<p>Software vulnerabilities are not a hypothetical. In March 2011, RSA SecurID hardware tokens were found to be vulnerable because of a <a href="https://en.wikipedia.org/wiki/RSA_SecurID#March_2011_system_compromise">phishing attack at the company.</a> In April 2015, the Yubikey <a href="https://github.com/Yubico/ykneo-openpgp">ykneo-openpgp</a> software was found to be <a href="https://developers.yubico.com/ykneo-openpgp/SecurityAdvisory%202015-04-14.html">vulnerable</a> to a <a href="https://developers.yubico.com/ykneo-openpgp/SecurityAdvisory%202015-04-14.html">memory leak in OpenSSL.</a></p>
+<p>https://ssd.eff.org/en/module/introduction-threat-modeling https://www.schneier.com/blog/archives/2015/06/why_we_encrypt.html https://news.ycombinator.com/item?id=9550094</p>
+<blockquote>
+<p>If you look at security from economic terms, it's a trade-off. Every time you get some security, you're always trading off something. You're going to trade off something, either money or time, convenience, capabilities, maybe fundamental liberties. And the question to ask when you look at a security anything is not whether this makes us safer, but whether it's worth the trade-off. - <a href="https://www.ted.com/talks/bruce_schneier/transcript?language=en">Bruce Schneier, <em>The security image</em></a></p>
+</blockquote>
+<p>I like to <strong>recreationally paranoid</strong></p>
+<h5 id="asides-1">Asides</h5>
+<dl>
+<dt>Yubikey NEO vulnerability</dt>
+<dd>You should perform the test in the Yubico security advisory to find out if you're vulnerable and request a free replacement with the updated software. While admittedly unlikely to be an issue in the wild, if you're going to do something you may as well do it right. Worst case scenario you give Yubico your address and get to give a free NEO to somebody else.
+</dd>
+<dt>What about biometric/SMS/<insert other security method>?</dt>
+<dd>I prefer the security and relative ease-of-use of the NEO. Everybody feels differently, and Bonneau et al in <a href="http://research.microsoft.com/pubs/161585/QuestToReplacePasswords.pdf">The Quest to Replace Passwords (PDF)</a> have devised an <a href="images/authentication-tradeoffs-table.png">excellent table to quantify the pros and cons</a> of different methods.
+</dd>
+</dl>
+</div>
+<!-- *********************************************************************** -->
+<div class="turda section r-img-inline">
+<h1 id="into-the-crevasse">Into the Crevasse</h1>
+<div class="figure">
+<img src="images/salina_turda.jpg" alt="Salina Turda by Cosmin Danila; CC BY-SA 3.0 RO" />
+<p class="caption"><a href="https://commons.wikimedia.org/wiki/File:Salina_Turda_045.jpg">Salina Turda by Cosmin Danila</a>; <a href="https://creativecommons.org/licenses/by-sa/3.0/ro/deed.en">CC BY-SA 3.0 RO</a></p>
+</div>
+<h2 id="something-pretty-good">Something Pretty Good</h2>
+<p>PGP is the <a href="http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html">de facto</a> method of storing data at rest which we will use to store passwords via the excellent <a href="http://www.passwordstore.org/">password store</a>. So now we have a system where to login you need three things: (a) the public key, (b) the private key (and the encryption subkey...more on this later), and (c) the passphrase to unlock the the keychain. The Neo is great because it holds onto (b) and (c) while requiring a short, impossible to brute-force PIN to unlock. In addition to encryption, we can also use PGP for authentication, which we will use to securely SSH with the same PIN.</p>
+<h2 id="setup">Setup</h2>
+<p>The setup process is not for the faint of heart. There are active <a href="https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856">bugs</a> that make it far less than a plug-and-play experience on Ubuntu. But if you've made it this far you're at least <a href="https://xkcd.com/1181/">recreationally paranoid</a> enough to know your way around a command line. Here are some specifics about my setup, but there should be no hardware quirks since the Yubikey looks like two things to the OS: a CCID device and a USB keyboard.</p>
+<ul>
+<li>Laptop: 2012 Thinkpad T520</li>
+<li>Device: <a href="https://www.yubico.com/products/yubikey-hardware/yubikey-neo/">Yubikey NEO</a></li>
+<li>Operating System: Ubuntu/Xubuntu 14.04/14.10</li>
+<li>Shell: <a href="http://www.zsh.org/">Z Shell</a> with <a href="https://github.com/sorin-ionescu/prezto">prezto</a></li>
+</ul>
+<h3 id="step-1-setup-gpg">Step 1: Setup GPG</h3>
+<p>Start off with the crown jewel: gpg. Feature-wise, the <code>gpg</code> and <code>gpg2</code> packages are very similiar. They both have up-to-date security patches and both actively maintained. But straight from <code>man</code>'s mouth, <code>gpg2</code> is better suited to desktop use.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># side note, is there a reason nobody uses the `apt` command?</span>
+<span class="co"># it&#39;s the best!</span>
+<span class="kw">sudo</span> apt install gnupg2</code></pre></div>
+<p>One drawback to using <code>gpg2</code> is that ZSH tab completions do not automatically kick in. Add the following lines to your <code>.zshrc</code> to easily fix this travesty.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> ~/.zshrc
+<span class="kw">...</span>
+<span class="co"># make it less tempting to use different versions of gpg</span>
+<span class="kw">alias</span> gpg=gpg2
+<span class="co"># some options are slightly different/non-existant in gpg...be warned</span>
+<span class="kw">compdef</span> gpg2=gpg
+<span class="kw">...</span></code></pre></div>
+<p>Nothing about the other software we use <em>requires</em> that you use zsh. But, there is an <strong>excellent</strong> <a href="https://github.com/sorin-ionescu/prezto/blob/master/modules/gpg/init.zsh">GPG script</a> that simplifies so much of the pain. This script can easily be ported to a normal zsh script for users of oh-my-zsh, and I imagine it is also rewritable for Bash pretty easily.</p>
+<h3 id="step-2-setup-your-public-and-private-gpg-keys">Step 2: Setup your public and private GPG keys</h3>
+<p>This step of the process is actually very well-documented elsewhere online. <a href="http://spin.atomicobject.com/2013/11/24/secure-gpg-keys-guide/">My favorite guide</a> is by Mike English from Atomic Object because he describes the rationale behind the subkey architecture and where the security in the scheme comes from. Note that when you generate your keys the maximum length they can be for the Neo is 2048-bits. Yubico has their reasoning <a href="https://www.yubico.com/2015/02/big-debate-2048-4096-yubicos-stand/">here</a>, but the gist is that 4096-bit keys are future proofing for a future in which Elliptic Curves Cryptography (ECC) exists, so why isn't the hypothetical future you using ECC. Another great resource is this <a href="https://help.riseup.net/en/security/message-security/openpgp/best-practices">Best Practices guide</a> from riseup that goes into some good advice for distributing your public key.</p>
+<p>After the setup and before even considering the Yubikey, think about the various things that might go wrong with the encrpytion scheme and make appropriate backups of your private keys. Here are some things to kick off your paranoid fantasies:</p>
+<ul>
+<li>If you lose the Yubikey: HOTP codes need to be manually reset, need to use private key backups, consider revocation if the normal PIN is obvious or if the Admin PIN (which can reset a lockout) is obvious</li>
+<li>If you lose private key or revocation: need to revoke...consider implications on data already encrypted</li>
+<li>If close to expiration date: need to move date forward or regenerate (what are the implications on encrypted data?)</li>
+<li>If you lose laptop with key stubs on it</li>
+<li>If you lose any one of the backups</li>
+</ul>
+<h3 id="step-3-setup-the-yubikey-neo">Step 3: Setup the Yubikey NEO</h3>
+<p>We need to compile the <a href="https://github.com/Yubico/yubikey-personalization">ykpersonalize</a> tool to change the mode on the dongggle from the default cool demo mode to HOTP+CCID mode. The <code>README.adoc</code> file is pretty spot on, but the gist is</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt install libyubikey-dev pkg-config libusb-1.0.0-dev git
+<span class="kw">git</span> clone git://github.com/Yubico/yubikey-personalization.git
+<span class="kw">cd</span> yubikey-personalization
+<span class="kw">autoreconf</span> --install
+<span class="kw">./configure</span>
+<span class="kw">sudo</span> make check install
+<span class="co"># note, this step is important to avoid the error</span>
+<span class="co"># &quot;ykinfo: error while loading shared libraries: libykpers-1.so.1: cannot open shared object file&quot;</span>
+<span class="kw">sudo</span> ldconfig
+<span class="co"># If this does not work, two possibilities:</span>
+<span class="co">#   1) Device did not connect properly...check `dmesg | tail` for something like</span>
+<span class="co"># [37818.368240] usb 2-1.2: New USB device found, idVendor=1050, idProduct=0111</span>
+<span class="co"># [37818.368252] usb 2-1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0</span>
+<span class="co"># [37818.368259] usb 2-1.2: Product: Yubikey NEO OTP+CCID</span>
+<span class="co">#   2) The current user cannot access the device. Either run via `sudo` or check</span>
+<span class="co">#      the section below on udev rules.</span>
+<span class="kw">ykpersonalize</span> -m82
+<span class="co"># now reboot the card (unplug and plug) to have the new mode kick in</span></code></pre></div>
+<p>We say <code>-m82</code> not because the year of the Falklands War is critical to hardware tokens, but because it is the binary OR of the flags <code>0x2 | 0x80</code> which means that we want to enable OTP mode, CCID (smartcard) mode, and use the <code>MODE_FLAG_EJECT</code> flag. You could probably also choose <code>-m81</code> or <code>-m86</code> if you felt like it (check <code>man ykpersonlize</code> to decide which mode is best for you).</p>
+<h3 id="step-4-setup-the-smartcard-utilities">Step 4: Setup the SmartCard Utilities</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># nb, this removes ubuntu-gnome-desktop which removes software-center</span>
+<span class="co"># if you need these (I seem to get by fine without), this step is probably not necessary</span>
+$ <span class="kw">sudo</span> apt remove gnome-keyring
+<span class="co"># Now, the last one or two here might not be necessary...YMMV</span>
+$ <span class="kw">sudo</span> apt install gnupg2 gnupg-agent gpgsm pcscd libccid</code></pre></div>
+<h3 id="step-5-setup-configurations">Step 5: Setup Configurations</h3>
+<p>This step is the most infuriating, bar none, because here Ubuntu actively fights you with tight integration with gnome-keyring and automatically starting versions of gpg-agent and ssh-agent which will wittle away your will to even exist. The best explanation for what to do here comes from <a href="http://www.bootc.net/archives/2013/06/09/my-perfect-gnupg-ssh-agent-setup/">Chris Boot's guide to a perfect setup</a>.</p>
+<p>There are a two main goals we have here. First is to get the SmartCard to work correctly. We will know when this is done because <code>gpg2 --card-status</code> will print out a bunch of details instead of an error. After that milestone, the goal is to load a gpg identity onto the card (covered in Mike English's guide), and run <code>ssh-add -l</code> and see something. At that point we are golden like a basket of fries or maybe Pony Boy.</p>
+<p>First we set up the device to have the correct permissions. If <code>sudo gpg2 --card-status</code> works for you but <code>gpg2 --card-status</code> does not, you are probably missing this step. I think the ever helpful <code>gpg: selecting openpgp failed: ec=6.108</code> error is also a consequence of this (if not, you might need to <a href="https://wiki.archlinux.org/index.php?title=GnuPG&amp;oldid=367867#GnuPG_together_with_OpenSC">change the SmartCard driver</a>). The procedure for doing this in the yubikey-personalization repository never worked for me, so the way that I could actually get working is a little simpler and comes via <a href="https://blog.habets.se/2013/02/GPG-and-SSH-with-Yubikey-NEO">Thomas Habets's Blog</a>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Setup udev rules file.</span>
+<span class="co"># These idVendor and idProduct tags are customized to the Yubikey NEO. Every donggggle has the same unique ids.</span>
+<span class="co"># NB Habets&#39;s blog uses ATTRS rather than ATTR...both are fine I guess?</span>
+$ <span class="kw">cat</span> /etc/udev/rules.d/99-yubikey.rules
+<span class="ot">SUBSYSTEM=</span>=<span class="st">&quot;usb&quot;</span>, <span class="kw">ATTR</span><span class="dt">{idVendor}</span>==<span class="st">&quot;1050&quot;</span>, ATTR<span class="dt">{idProduct}</span>==<span class="st">&quot;0111&quot;</span>, OWNER=<span class="st">&quot;oychang&quot;</span></code></pre></div>
+<p>Next, we set up <code>gpg2</code> and <code>gpg-agent</code>. The process of doing this is supposed to be very easy, but Ubuntu gets in the way. If you delete the <code>.conf</code> and <code>.desktop</code> files and a <code>ps aux | grep gpg-agent</code> or <code>ssh-agent</code> show up with results, you have more configuration files to hunt down and exterminate.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> ~/.gnupg/gpg.conf
+<span class="kw">...</span>
+<span class="kw">use-agent</span>
+<span class="kw">...</span>
+
+$ <span class="kw">cat</span> ~/.gnupg/gpg-agent.conf
+<span class="kw">...</span>
+<span class="kw">enable-ssh-support</span>
+<span class="kw">...</span>
+
+$ <span class="kw">sudo</span> rm -f /etc/xdg/autostart/gnome-keyring-<span class="dt">{gpg,ssh}</span>.desktop
+<span class="co"># NB: This file gets recreated when there is an update to gpg-agent!</span>
+$ <span class="kw">sudo</span> rm -f /usr/share/upstart/sessions/gpg-agent.conf
+<span class="co"># to be safe, I like to clear all of the agent files in /tmp on reboot</span>
+<span class="co"># just in case anything goes wrong</span>
+$ <span class="kw">cat</span> /etc/default/rcS
+<span class="kw">...</span>
+<span class="ot">TMPTIME=</span>0
+<span class="kw">...</span>
+
+<span class="co"># To verify most things are there.</span>
+<span class="co"># dirmngr is optional but hey it don&#39;t hurt</span>
+$ <span class="kw">gpgconf</span> --check-programs</code></pre></div>
+<p>After a reboot, enable the <code>gpg</code> plugin for Prezto. It's nothing too fancy (see code <a href="https://github.com/sorin-ionescu/prezto/blob/master/modules/gpg/init.zsh">here</a>), but it is pretty much bulletproof so if you're having problems you can almost always eliminate problems setting environmental variables and other terrible things.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> ~/.zpreztorc
+<span class="kw">...</span>
+<span class="co"># Set the Prezto modules to load (browse modules).</span>
+<span class="co"># The order matters.</span>
+<span class="kw">zstyle</span> <span class="st">&#39;:prezto:load&#39;</span> pmodule \
+  <span class="st">&#39;environment&#39;</span> \
+  <span class="st">&#39;terminal&#39;</span> \
+  <span class="st">&#39;editor&#39;</span> \
+  <span class="st">&#39;history&#39;</span> \
+  <span class="st">&#39;directory&#39;</span> \
+  <span class="st">&#39;spectrum&#39;</span> \
+  <span class="st">&#39;utility&#39;</span> \
+  <span class="st">&#39;completion&#39;</span> \
+  <span class="st">&#39;prompt&#39;</span> \
+  <span class="st">&#39;gpg&#39;</span>
+<span class="kw">...</span></code></pre></div>
+<p><code>ssh-add -l</code> should work now. If it doesn't try these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Ensure you have the SmartCard with your private subkeys and your computer has your public key. <code>gpg2 --card-status</code> should look like a mini-dossier.</li>
+<li>You might <em>need</em> to have stubs instead of full keys. When you run <code>gpg2 -K</code>, you should see <code>ssb&gt;</code>, not <code>ssb</code></li>
+<li>Really, the hard part here is removing <code>gnome-keyring</code> and all of the configuration files for <code>gpg-agent</code> and <code>ssh-agent</code></li>
+<li>The <a href="https://wiki.archlinux.org/index.php/GnuPG">ArchWiki GnuPG</a> page is invaluable for commands you can use to poke different parts of the setup to isolate your problem</li>
+<li>Restart computer maybe?</li>
+</ol>
+<h2 id="optional-utilities">Optional Utilities</h2>
+<p>Now, the setup is over! Here are some justifications for why you spent a week setting up GPG:</p>
+<ol style="list-style-type: decimal">
+<li><a href="http://www.passwordstore.org/">pass</a> is great for managing passwords. It's pretty much just a bash script that creates <code>.gpg</code> files for your individual passwords that you can edit in <code>vim</code> or <code>emacs</code> to add more details. There are negative sides to this approach like the website names being unencrypted, as well as <code>history</code> potentially showing what websites you use the most.</li>
+<li>SSH authentication via public key is super easy. <code>ssh-agent</code> takes care of converting your GPG authentication key into a form for use with ssh. So you just add the output of <code>ssh-add -L</code> to the remote machine's <code>~/.ssh/authorized_hosts</code>, and magic happens! If you use git with ssh, you get authenticated pushes and pulls as well.</li>
+<li>HOTP codes. The system here is not great. You need to get Yubico's python applet for your PC and a pretty poorly designed (visually only, I hope) Yubico app for your phone. And then, you can only write new accounts (of which there can thankfully be many) via USB. And also, you need to awkwardly search for where to tap the donggggle on your mobile device since the NFC antenna is so small. And at the end of the day, it really feels like putting all your eggs in one basket, so the effectiveness with gpg is mediocre.</li>
+</ol>
+</div>
+<!-- *********************************************************************** -->
+<div class="xkcd section">
+<h1 id="conclusion">Conclusion</h1>
+<div class="figure">
+<img src="images/pgp_xkcd.png" alt="XKCD #1811 by Randall Munroe; CC BY-NC 2.5; &quot;If you want to be extra safe, check that there&#39;s a big block of jumbled characters at the bottom.&quot;" />
+<p class="caption"><a href="https://xkcd.com/1181/">XKCD #1811 by Randall Munroe</a>; <a href="https://creativecommons.org/licenses/by-nc/2.5/">CC BY-NC 2.5</a>; &quot;If you want to be extra safe, check that there's a big block of jumbled characters at the bottom.&quot;</p>
+</div>
+<p>Hopefully there were some helpful tips in this ramble. If you have your setup going (especially the public keystore part), try emailing me with <a href="https://oychang.com/oychang.gpg" class="uri">https://oychang.com/oychang.gpg</a> so we can start work on the chapter of our technically accurate Snowden/Greenwald slash fiction where they setup gpg.</p>
+<h4 id="asides-2">Asides</h4>
+<ul>
+<li>The code for the technicolor header comes from <a href="http://stackoverflow.com/questions/19165364" class="uri">http://stackoverflow.com/questions/19165364</a> with modifications to run even when not hovered and convert a text block to individual <code>&lt;span&gt;</code>s</li>
+<li>Dominant image colors extracted using <a href="http://lokeshdhakar.com/projects/color-thief/">color-thief</a></li>
+</ul>
+</div>
+</div>
+</body>
+</html>

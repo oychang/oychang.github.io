@@ -1,34 +1,127 @@
-**Problem**: Remembering passwords is a huge pain in the ass but a requirement to not have all your money stolen
+---
+title: An Accurate Guide to Yubikey GPG Wizardry
+---
 
-**Solution**: [2-Factor Authentication (2FA)](https://en.wikipedia.org/wiki/Multi-factor_authentication) means you can keep using your birthday (June 4, 1994 at Tampa General Hospital for me, if you also want to take a shot at going through the backdoor of asinine "Security Questions") as your password while you get to keep all your money.
+<div id="subheader">
+[Home](https://oychang.com/) --
+<time datetime="2015-07-13">July 13, 2015</time> --
+[Suggest Edits](https://github.com/oychang/oychang.github.io/tree/master/posts/gpg/notes-on-yubikey-neo.md)
+</div>
 
-2FA works reasonably well for most non-Snowdens by generating unique, short PIN codes that come in many forms like text messages, [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2), or RSA Tokens. However, this approach involves trusting that all the systems involved in delivering the text message to you (cell towers, server, internet pipes, phone hardware, OS manufacturer, text messaging apps), or the code of Google Authenticator (open source, but hard to tell if what you see in code is what you get on Google Play), or the companies who made the keys in the first place (RSA [scandalously failed](https://en.wikipedia.org/wiki/RSA_SecurID#March_2011_system_compromise) on this count).
+<script type="text/javascript">
+(function () {
+  'use strict';
+  var DURATION = 6;
+  var heading = document.getElementById("header").children[0];
+  var title = heading.textContent;
+  var hueChange = Math.floor(360 / title.length);
 
-Bruce Schneier, a cryptogropher whose claim to fame is having a hard-to-spell last name, promulgates the idea that security is not a dichotomy, but a spectrum that becomes more of a pain-in-the-ass the further right you go:
+  heading.innerText = "";
+  var newHTML = "";
+  for (var i in title) {
+    var c = title[i];
+    var delay = (DURATION * ((i * hueChange) % 360) / 360) - DURATION + 's';
+    var attrs = [
+      'color: hsl(' + (i * hueChange) + ', 100%, 50%)',
+      'animation-delay: ' + delay,
+      '-webkit-animation-delay: ' + delay,
+      '-moz-animation-delay: ' + delay,
+      '-o-animation-delay: ' + delay,
+    ];
+    attrs = attrs.join(";");
+
+    newHTML += '<span style="' + attrs + '">' + c + '</span>';
+  }
+  heading.innerHTML = newHTML;
+
+})();
+</script>
+
+<div class="content">
+<div class="banana section r-img-inline">
+
+# Introduction
+
+![Size Comparison of Various Hardware Tokens; own work; [CC BY 4.0]( https://creativecommons.org/licenses/by/4.0/)](images/size_comparison.png)
+
+The [Yubikey NEO](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/) is a key-sized device that provides an additional "multi-factor" level of security to normal passwords that can be accessed via USB or <acronym title="Near Field Communication">NFC</acronym>, as well as a powerful embedded <acronym title="GNU Privacy Guard">GPG</acronym> SmartCard for use with the <acronym title="Pretty Good Privacy">PGP</acronym> system of public-key cryptography.
+
+Pictured above are two alternatives to the hardware token approach to multifactor authentication.
+To use multifactor authentication the process is generally to require a second prompt after putting in your password that requires you to type in the [time-based one-time password](https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm) that the token spits out.
+
+The most common implementation of <acronym title="Time-based One-Time Password">TOTP</acronym>, [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2), isn't even pictured--it's implemented in software rather than hardware, the tradeoff being you trust the Authenticator code and Android system to be secure instead of carrying around a token for each site you care about (tokens are _not_ small).
+Hence the allure of the NEO: the TOTP data is stored and calculated on the key and you only have to trust the device you use to read the code for independent thirty second intervals.
+
+The NEO is probably the most featureful hardware token you can buy: it is small, supports Windows, Mac, Linux, Android, <acronym title="Fast IDentity Online Universal 2nd Factor">FIDO U2F</acronym>, One-Time Passwords, HMAC-based One-Time Passwords, Time-based One-Time Passwords, HMAC-SHA1 Challange-Response, OpenPGP, Static Passwords, and SmartCards.
+This page describes the terrible, horrible, no good, very painful setup process for modern versions of the GPG SmartCard on Ubuntu and applications in SSH Authentication, File Storage, and OTP.
+
+##### Asides
+
+How is the TOTP implemented?
+  ~ The NEO does not contain a power source. You need a Python application on a computer or an Yubico Android application to read the TOTP. [From Yubico,](http://www.yubico.com/wp-content/uploads/2014/02/Yubico-TOTP-Setup.pdf) the high-level description is to use "a Challenge/Response configuration to the YubiKey in HMAC-SHA1 mode using the shared OATH secret from the site or service to be secured. The helper app (YubiTOTP) passes the current system time as a challenge to the YubiKey and processes the response as per the OATH specification to generate a 6 or 8 digit OATH-TOTP code."
+
+Could TOTP data be stolen by as you walk around?
+  ~ Yes, but unlikely. The token stores the label and secret and those can be accessed from any device without authentication. In practice on a Moto X and Nexus 7, you need to memorize the location of the NFC antenna and align both the antenna the key to read the TOTPs. To steal data surreptitiously at distance would require [an infeasibly large antenna.](http://physics.stackexchange.com/questions/44037/why-is-near-field-communication-nfc-range-limited-to-about-20cm) To steal a TOTP code in-person by picking the NEO up off of a desk would be trivially easy.
+
+Are they durable?
+  ~ Surprisingly so! The 7-month year old NEO pictured above usually dangles off of a laptop port on a keychain sporting maybe a half-dozen keys while not in-pocket or plugged into an exposed motorcycle keyhole in rainy Florida.
+
+</div>
+
+<!-- *********************************************************************** -->
+
+<div class="winter-forest section">
+
+# Effectiveness
+
+![[Battle of the Bulge](https://en.wikipedia.org/wiki/File:Battle_of_the_Bulge.jpg); public domain](images/bulge.jpg)
+
+If 20th century France was anything at all like Imperial Japan, the obituaries of May 1940 would likely include the seppuku of André Maginot, champion of the "impenetrable" Maginot Line.
+(Though on the plus side there would be far more samurai in classic French cinema.)
+I imagine the Yubikey as similar: it definitely makes you less vulnerable to certain password attacks (common), but it is not a panacea because there are innumerable other vulnerabilities if you're a target ranging from improper use in practice like leaving the key around to software vulnerabilities to [Van Eck phreaking](https://en.wikipedia.org/wiki/Van_Eck_phreaking).
+
+Software vulnerabilities are not a hypothetical.
+In March 2011, RSA SecurID hardware tokens were found to be vulnerable because of a [phishing attack at the company.](https://en.wikipedia.org/wiki/RSA_SecurID#March_2011_system_compromise)
+In April 2015, the Yubikey [ykneo-openpgp](https://github.com/Yubico/ykneo-openpgp) software was found to be [vulnerable](https://developers.yubico.com/ykneo-openpgp/SecurityAdvisory%202015-04-14.html) to a [memory leak in OpenSSL.](https://developers.yubico.com/ykneo-openpgp/SecurityAdvisory%202015-04-14.html)
+
+
+https://ssd.eff.org/en/module/introduction-threat-modeling
+https://www.schneier.com/blog/archives/2015/06/why_we_encrypt.html
+https://news.ycombinator.com/item?id=9550094
 
 > If you look at security from economic terms, it's a trade-off.
 > Every time you get some security, you're always trading off something.
 > You're going to trade off something, either money or time, convenience, capabilities, maybe fundamental liberties.
 > And the question to ask when you look at a security anything is not whether this makes us safer, but whether it's worth the trade-off.
-> - [Bruce Schneier, _The security image_](https://www.ted.com/talks/bruce_schneier/transcript?language=en) (trigger warning: TED talk)
+> - [Bruce Schneier, _The security image_](https://www.ted.com/talks/bruce_schneier/transcript?language=en)
 
-To quantify this, Bonneau et al in [The Quest to Replace Passwords (PDF)](http://research.microsoft.com/pubs/161585/QuestToReplacePasswords.pdf) devised this table to compare various schemes against the historical gold standard.
+I like to **recreationally paranoid**
 
-![Compare and Contrast of Ease-of-Use in Authentication](https://raw.githubusercontent.com/oychang/oychang.github.io/master/posts/gpg/authentication-tradeoffs-table.png)
+##### Asides
 
-The whole spectrum is represented here, most of the suspects familiar. Facebook Connect is what you use on websites to Just Get It To Work without remembering a different password. But who would trust Facebook Connect with their banking login? 
+Yubikey NEO vulnerability
+  ~ You should perform the test in the Yubico security advisory to find out if you're vulnerable and request a free replacement with the updated software. While admittedly unlikely to be an issue in the wild, if you're going to do something you may as well do it right. Worst case scenario you give Yubico your address and get to give a free NEO to somebody else.
 
-Biometric authentication? Cool in spy movies where they do the thing with the eye and the voice and sometimes the eye stealing thing, cool in the iPhone, but generally a [dangerously insecure](http://arstechnica.com/apple/2013/09/chaos-computer-club-hackers-trick-apples-touchid-security-feature/) pain in the ass.
+What about biometric/SMS/<insert other security method>?
+  ~ I prefer the security and relative ease-of-use of the NEO. Everybody feels differently, and Bonneau et al in [The Quest to Replace Passwords (PDF)](http://research.microsoft.com/pubs/161585/QuestToReplacePasswords.pdf) have devised an [excellent table to quantify the pros and cons](images/authentication-tradeoffs-table.png) of different methods.
 
-Then, the most green cells occur in multifactor authentication schemes. We'll setup a Yubikey NEO of the clan Hardware Tokens for the rest of this article. 
+</div>
 
-# Something Pretty Good
+<!-- *********************************************************************** -->
 
-The [Neo](https://www.yubico.com/products/yubikey-hardware/yubikey-neo/), the chosen one, is the Bentley of hardware tokens. It is a dongle that connects via USB, has HOTP via NFC on your phone or USB (an arguably more secure flavor than Google Authenticator since the codes are stored on the Neo), [FIDO U2F](https://fidoalliance.org/about/overview/) ([see: gushing praise](https://konklone.com/post/get-a-fido-key-right-now-and-log-into-stuff-with-it)), and most importantly a programmable SmartCard (more specifically, a [Common Criteria, JavaCard element](https://lwn.net/Articles/618888/)). The SmartCard is important because it means all cryptography operations happen on the actual donggle on a chip slathered with resin.
+<div class="turda section r-img-inline">
 
-The SmartCard allows us to use a [Pretty Good Privacy (PGP)](https://en.wikipedia.org/wiki/Pretty_Good_Privacy) public key/private key system. The belle of the PGP implementation ball is GPG, widely available and considered very reliable. PGP is the [de facto](http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html) method of storing data at rest which we will use to store passwords via the excellent [password store](http://www.passwordstore.org/). So now we have a system where to login you need three things: (a) the public key, (b) the private key (and the encryption subkey...more on this later), and (c) the passphrase to unlock the the keychain. The Neo is great because it holds onto (b) and (c) while requiring a short, impossible to brute-force PIN to unlock. In addition to encryption, we can also use PGP for authentication, which we will use to securely SSH with the same PIN.
+# Into the Crevasse
 
-# Setup
+![[Salina Turda by Cosmin Danila](https://commons.wikimedia.org/wiki/File:Salina_Turda_045.jpg); [CC BY-SA 3.0 RO](https://creativecommons.org/licenses/by-sa/3.0/ro/deed.en) ](images/salina_turda.jpg)
+
+[Yubico Guide ]: https://www.yubico.com/2012/12/yubikey-neo-openpgp/ "Yubikey NEO and OpenPGP"
+
+## Something Pretty Good
+
+PGP is the [de facto](http://blog.cryptographyengineering.com/2014/08/whats-matter-with-pgp.html) method of storing data at rest which we will use to store passwords via the excellent [password store](http://www.passwordstore.org/). So now we have a system where to login you need three things: (a) the public key, (b) the private key (and the encryption subkey...more on this later), and (c) the passphrase to unlock the the keychain. The Neo is great because it holds onto (b) and (c) while requiring a short, impossible to brute-force PIN to unlock. In addition to encryption, we can also use PGP for authentication, which we will use to securely SSH with the same PIN.
+
+## Setup
 
 The setup process is not for the faint of heart. There are active [bugs](https://bugs.launchpad.net/ubuntu/+source/gnome-keyring/+bug/884856) that make it far less than a plug-and-play experience on Ubuntu. But if you've made it this far you're at least [recreationally paranoid](https://xkcd.com/1181/) enough to know your way around a command line. Here are some specifics about my setup, but there should be no hardware quirks since the Yubikey looks like two things to the OS: a CCID device and a USB keyboard.
 
@@ -37,7 +130,7 @@ The setup process is not for the faint of heart. There are active [bugs](https:/
 - Operating System: Ubuntu/Xubuntu 14.04/14.10
 - Shell: [Z Shell](http://www.zsh.org/) with [prezto](https://github.com/sorin-ionescu/prezto)
 
-# Step 1: Setup GPG
+### Step 1: Setup GPG
 
 Start off with the crown jewel: gpg.
 Feature-wise, the `gpg` and `gpg2` packages are very similiar.
@@ -67,10 +160,10 @@ Nothing about the other software we use _requires_ that you use zsh.
 But, there is an **excellent** [GPG script](https://github.com/sorin-ionescu/prezto/blob/master/modules/gpg/init.zsh) that simplifies so much of the pain.
 This script can easily be ported to a normal zsh script for users of oh-my-zsh, and I imagine it is also rewritable for Bash pretty easily.
 
-# Step 2: Setup your public and private GPG keys
+### Step 2: Setup your public and private GPG keys
 
 This step of the process is actually very well-documented elsewhere online. [My favorite guide](http://spin.atomicobject.com/2013/11/24/secure-gpg-keys-guide/) is by Mike English from Atomic Object because he describes the rationale behind the subkey architecture and where the security in the scheme comes from. Note that when you generate your keys the maximum length they can be for the Neo is 2048-bits. Yubico has their reasoning [here](https://www.yubico.com/2015/02/big-debate-2048-4096-yubicos-stand/), but the gist is that 4096-bit keys are future proofing for a future in which Elliptic Curves Cryptography (ECC) exists, so why isn't the hypothetical future you using ECC.
-Another great resource is this [Best Practices guide](https://help.riseup.net/en/security/message-security/openpgp/best-practices) from riseup that goes into some good advice for distributing your public key. 
+Another great resource is this [Best Practices guide](https://help.riseup.net/en/security/message-security/openpgp/best-practices) from riseup that goes into some good advice for distributing your public key.
 
 After the setup and before even considering the Yubikey, think about the various things that might go wrong with the encrpytion scheme and make appropriate backups of your private keys. Here are some things to kick off your paranoid fantasies:
 
@@ -80,7 +173,7 @@ After the setup and before even considering the Yubikey, think about the various
 - If you lose laptop with key stubs on it
 - If you lose any one of the backups
 
-# Step 3: Setup the Yubikey NEO
+### Step 3: Setup the Yubikey NEO
 
 We need to compile the [ykpersonalize](https://github.com/Yubico/yubikey-personalization) tool to change the mode on the dongggle from the default cool demo mode to HOTP+CCID mode.
 The `README.adoc` file is pretty spot on, but the gist is
@@ -111,7 +204,7 @@ but because it is the binary OR of the flags `0x2 | 0x80` which means that we wa
 OTP mode, CCID (smartcard) mode, and use the `MODE_FLAG_EJECT` flag.
 You could probably also choose `-m81` or `-m86` if you felt like it (check `man ykpersonlize` to decide which mode is best for you).
 
-# Step 4: Setup the SmartCard Utilities
+### Step 4: Setup the SmartCard Utilities
 
 ```bash
 # nb, this removes ubuntu-gnome-desktop which removes software-center
@@ -121,7 +214,7 @@ $ sudo apt remove gnome-keyring
 $ sudo apt install gnupg2 gnupg-agent gpgsm pcscd libccid
 ```
 
-# Step 5: Setup Configurations
+### Step 5: Setup Configurations
 
 This step is the most infuriating, bar none, because here Ubuntu actively fights you with tight integration with gnome-keyring and automatically starting versions of gpg-agent and ssh-agent which will wittle away your will to even exist. The best explanation for what to do here comes from [Chris Boot's guide to a perfect setup](http://www.bootc.net/archives/2013/06/09/my-perfect-gnupg-ssh-agent-setup/).
 
@@ -130,7 +223,7 @@ There are a two main goals we have here. First is to get the SmartCard to work c
 First we set up the device to have the correct permissions. If `sudo gpg2 --card-status` works for you but `gpg2 --card-status` does not, you are probably missing this step. I think the ever helpful `gpg: selecting openpgp failed: ec=6.108` error is also a consequence of this (if not, you might need to [change the SmartCard driver](https://wiki.archlinux.org/index.php?title=GnuPG&oldid=367867#GnuPG_together_with_OpenSC)).
 The procedure for doing this in the yubikey-personalization repository never worked for me, so the way that I could actually get working is a little simpler and comes via [Thomas Habets's Blog](https://blog.habets.se/2013/02/GPG-and-SSH-with-Yubikey-NEO):
 
-```udevrules
+```bash
 # Setup udev rules file.
 # These idVendor and idProduct tags are customized to the Yubikey NEO. Every donggggle has the same unique ids.
 # NB Habets's blog uses ATTRS rather than ATTR...both are fine I guess?
@@ -195,7 +288,7 @@ zstyle ':prezto:load' pmodule \
 4. The [ArchWiki GnuPG](https://wiki.archlinux.org/index.php/GnuPG) page is invaluable for commands you can use to poke different parts of the setup to isolate your problem
 5. Restart computer maybe?
 
-# Optional Utilities
+## Optional Utilities
 
 Now, the setup is over! Here are some justifications for why you spent a week setting up GPG:
 
@@ -203,6 +296,22 @@ Now, the setup is over! Here are some justifications for why you spent a week se
 2. SSH authentication via public key is super easy. `ssh-agent` takes care of converting your GPG authentication key into a form for use with ssh. So you just add the output of `ssh-add -L` to the remote machine's `~/.ssh/authorized_hosts`, and magic happens! If you use git with ssh, you get authenticated pushes and pulls as well.
 3. HOTP codes. The system here is not great. You need to get Yubico's python applet for your PC and a pretty poorly designed (visually only, I hope) Yubico app for your phone. And then, you can only write new accounts (of which there can thankfully be many) via USB. And also, you need to awkwardly search for where to tap the donggggle on your mobile device since the NFC antenna is so small. And at the end of the day, it really feels like putting all your eggs in one basket, so the effectiveness with gpg is mediocre.
 
+</div>
+
+<!-- *********************************************************************** -->
+
+<div class="xkcd section">
+
 # Conclusion
 
+![[XKCD #1811 by Randall Munroe](https://xkcd.com/1181/); [CC BY-NC 2.5]( https://creativecommons.org/licenses/by-nc/2.5/); "If you want to be extra safe, check that there's a big block of jumbled characters at the bottom."](images/pgp_xkcd.png)
+
 Hopefully there were some helpful tips in this ramble. If you have your setup going (especially the public keystore part), try emailing me with <https://oychang.com/oychang.gpg> so we can start work on the chapter of our technically accurate Snowden/Greenwald slash fiction where they setup gpg.
+
+#### Asides
+
+- The code for the technicolor header comes from <http://stackoverflow.com/questions/19165364> with modifications to run even when not hovered and convert a text block to individual `<span>`s
+- Dominant image colors extracted using [color-thief](http://lokeshdhakar.com/projects/color-thief/)
+
+</div>
+</div>
