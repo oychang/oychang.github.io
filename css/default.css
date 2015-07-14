@@ -3,9 +3,8 @@ body {
   margin: 0 auto;
   padding: 1em;
 }
-h1, h2, h3, h4, h5, h6, a {
-    font-family: 'Droid Sans', sans-serif;
-}
+h1, h2, h3, h4, h5, h6, a { font-family: 'Droid Sans', sans-serif; }
+li a:visited { color: #4e1780; }
 
 .text-centered { text-align: center; }
 .text-italic { font-style: italic; }
@@ -13,7 +12,9 @@ h1, h2, h3, h4, h5, h6, a {
 
 .gradient-one { background-color: #AEB4B4; }
 .gradient-two { background-color: #9BA09F; }
+.gradient-two a { color: #0000BF; }
 .gradient-three { background-color: #848A8B; }
+.gradient-three a { color: #000083; }
 /* Derived from .information-block's -webkit-padding-start: 40px */
 .information-block h5 { padding-left: 23px; }
 /* Identical to .information-block h5's -webkit-margin-before */
