@@ -133,7 +133,7 @@ I do not think there are specific quirks that make this setup important, but for
 
 - 2012 Thinkpad T520
 - 2015 YubiKey NEO
-- {Ubuntu, Xubuntu} {14.04, 14.10}
+- {Ubuntu, Xubuntu} {14.04, 14.10, 15.04}
 - [Z Shell](http://www.zsh.org/) with [prezto](https://github.com/sorin-ionescu/prezto)
 
 ### Install GPG2
