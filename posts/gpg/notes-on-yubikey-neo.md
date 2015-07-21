@@ -185,7 +185,7 @@ zstyle ':prezto:load' pmodule \
 #### Notes
 
 `gpg` is already installed in Ubuntu
-  ~ If you're using `apt` or `apt-get` you're using the **authentication** part of GPG. On a `apt update && apt upgrade` you see that Ubuntu's repositories are served over `http://`. It doesn't matter that this connection is insecure (for authenticity purposes) since package integrity is verified by you with the PGP keys baked into Ubuntu and listed with `apt-key list`
+  ~ If you're using `apt` or `apt-get` you're using the **signature** part of GPG. On a `apt update && apt upgrade` you see that Ubuntu's repositories are served over `http://`. It doesn't matter that this connection is insecure (for integrity purposes) since package integrity is verified by you with the PGP keys [baked into Ubuntu](https://help.ubuntu.com/community/SecureApt) and listed with `apt-key list`
 
 Setting up GPG on an airgapped computer
   ~ The security of the PGP key generation step effects all things you do with that key. So, if you do it on an insecure computer this whole thing is moot. Thus, for super security it is advised to do this step on an airgapped computer. I did not do this, but this recent article by [Víctor Cuadrado Juan](http://viccuad.me/blog/secure-yourself-part-1-airgapped-computer-and-GPG-smartcards/) has some good pointers for airgapping and a neat wristband transportation idea.
