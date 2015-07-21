@@ -424,7 +424,7 @@ $ <span class="kw">gpgconf</span> --check-programs</code></pre></div>
 <dd>The <code>&gt;</code> (greater than sign) mean in <code>gpg -K</code> indicates that the key is on a card (mode 1002) while the <code>#</code> (pound sign) means there is only a partial key stored (mode 1001). See <a href="http://lists.gnupg.org/pipermail/gnupg-users/2010-November/039892.html">this thread</a> for a summary, or check out the <code>g10</code> directory in the <code>gnupg</code> Git repository.
 </dd>
 <dt>When I do <code>gpg -K</code> I see <code>sec#</code>, but <code>gpg --armor --export-secret-keys</code> says othwerwise?</dt>
-<dd>You are only exporting the partial master secret key, not the actual master secret key. A <code>wc -l</code> comparison of my partial key and complete key shows that the partial key has less than 58% of the lines of the original key.
+<dd>You are only exporting the partial master secret key, not the actual master secret key. A <code>wc -l</code> comparison of my partial key and complete key shows that the partial key has fewer than 58% of the lines of the original key.
 </dd>
 <dt>Three strikes you're out</dt>
 <dd>It seems incredibly easy to brute force the PIN of the SmartCard since it is so much smaller than the full keyring passphrase. To combat this, you can only get the key wrong up to three times before the key will refuse to unlock. To unlock the token, you need to do <code>gpg --card-edit</code>, enter the administrator interface, and reset the counter. To check if you need to do this, look at the <code>PIN retry counter</code> row of <code>gpg --card-status</code>.

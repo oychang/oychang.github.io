@@ -320,7 +320,7 @@ You _need_ to have stubs instead of full keys. When you run `gpg2 -K`, you shoul
   ~ The `>` (greater than sign) mean in `gpg -K` indicates that the key is on a card (mode 1002) while the `#` (pound sign) means there is only a partial key stored (mode 1001). See [this thread](http://lists.gnupg.org/pipermail/gnupg-users/2010-November/039892.html) for a summary, or check out the `g10` directory in the `gnupg` Git repository.
 
 When I do `gpg -K` I see `sec#`, but `gpg --armor --export-secret-keys` says othwerwise?
-  ~ You are only exporting the partial master secret key, not the actual master secret key. A `wc -l` comparison of my partial key and complete key shows that the partial key has less than 58% of the lines of the original key.
+  ~ You are only exporting the partial master secret key, not the actual master secret key. A `wc -l` comparison of my partial key and complete key shows that the partial key has fewer than 58% of the lines of the original key.
 
 Three strikes you're out
   ~ It seems incredibly easy to brute force the PIN of the SmartCard since it is so much smaller than the full keyring passphrase. To combat this, you can only get the key wrong up to three times before the key will refuse to unlock. To unlock the token, you need to do `gpg --card-edit`, enter the administrator interface, and reset the counter. To check if you need to do this, look at the `PIN retry counter` row of `gpg --card-status`.
