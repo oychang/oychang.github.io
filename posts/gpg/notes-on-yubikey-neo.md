@@ -350,6 +350,7 @@ If you want to test your setup, try emailing me an encrypted message (as opposed
 
 - The code for the technicolor header comes from <http://stackoverflow.com/questions/19165364> with modifications to run when not hovered and to automatically convert a text block to individual `<span>`s
 - Dominant image colors extracted using [color-thief](http://lokeshdhakar.com/projects/color-thief/)
+- There _must_ be errors on this page, technical or otherwise. Edits welcome, no matter how pedantic.
 
 </div>
 </div>
