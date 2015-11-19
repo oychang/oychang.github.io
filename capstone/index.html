@@ -17,8 +17,8 @@
                 height: 95%; }
             body {
                 height: 100%;
-                font-family: "Futura Std",sans-serif;
-                background: url(bg.jpg) no-repeat center center fixed;
+                font-family: "Futura Std","Trebuchet MS",sans-serif;
+                background: url(bg.jpg) repeat center center fixed;
             }
             p { margin: 0; padding: 0; }
 
@@ -32,17 +32,6 @@
                 position: relative;
                 top: 50%;
                 transform: translateY(-50%);
-            }
-
-            .left-handed {
-                float: left;
-                width: 48%;
-                height: 100%;
-            }
-
-            .right-handed {
-                float: right;
-                width: 48%;
             }
 
             .text-box {
@@ -67,23 +56,30 @@
                 color: gold;
                 padding: .5em;
                 display: inline-block;
+                margin-bottom: 2em;
+            }
+
+            #nav { line-height: 1; width: 100%; }
+            #nav h2 {
+                line-height: 1;
+                margin: 0;
+                padding: .25em;
+                display: inline-block;
+                background: black;
+                color: grey;
             }
         </style>
     </head>
     <body>
         <div class="content">
-            <div class="left-handed">
-                <h1 class="text-box vcenter" id="question">What is Geography?</h1>
-
-            </div>
-
-            <div class="right-handed" id="navigation">
-                <ul>
-                    <li>History</li>
-                    <li>Types</li>
-                    <li>Careers</li>
-                    <li>Spatial Science</li>
-                </ul>
+            <div style="height:100%">
+                <div class="vcenter" id="nav">
+                    <h1 class="text-box" id="question">What is Geography?</h1><br />
+                    <h2>There are many <a href="/capstone/types.html">different types</a> of geography;</h2><br />
+                    <h2>it's not just a bunch of old guys <a href="/capstone/history.html">talking history.</a></h2><br />
+                    <h2>Nowadays, <a href="/capstone/spatialscience.html">spatial science</a> techniques like GIS</h2><br />
+                    <h2>are highly valued <a href="/capstone/careers.html">career</a> skills.</h2>
+                </div>
             </div>
 
             <div class="text-box" id="credits">
