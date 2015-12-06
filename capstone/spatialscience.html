@@ -67,18 +67,94 @@
             <p class="lead blog-description">Geographic Information Systems and Friends</p>
           </div>
 
-          <!-- this visualization is stolen from -->
-          <!-- http://bl.ocks.org/mbostock/3711652 -->
-          <div id="projection-container" style="margin: 0 auto; width: 100%">
-              <h1 style="width: 100%; text-align: center;" id="projection-name"></h1>
+          <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active">
+                  <a href="#cartography" aria-controls="cartography" role="tab" data-toggle="tab">The Earth</a>
+              </li>
+              <li role="presentation">
+                  <a href="#applications" aria-controls="applications" role="tab" data-toggle="tab">Applications</a>
+              </li>
+              <li role="presentation">
+                  <a href="#importance" aria-controls="importance" role="tab" data-toggle="tab">Importance</a>
+              </li>
+          </ul>
+
+          <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="cartography">
+                <!-- http://bl.ocks.org/mbostock/3711652 -->
+                <div id="projection-container" style="margin: auto; width: 100%;">
+                    <h1 style="width: 100%; text-align: center;" id="projection-name"></h1>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="applications">
+                <h2>An Umbrella</h2>
+
+                <p>
+                  Spatial science is an umbrella term that included the fields of <b>surveying, geographic information systems, hydrography, and cartography</b>.
+                  Here you'll find large organizations like USGS alongside corporations like Esri and academics attempting to describe the physical properties of the Earth
+                  and the quantifiable relationships of the people, places, and things on it.
+                </p>
+
+                <div>
+                  <h2>maps maps maps</h2>
+                  <img src="img/icon.png" style="display: inline; width: 200px; margin: 1em;">
+                  <p style="display: inline-block; width: 66%">
+                    The most visible example of spatial science are maps.
+                    <b>Navigational tools</b> like Google Maps are practically ubiquitous and rely on the use of modern technologies like Global Positioning System (GPS) satellites
+                    and portable smart phones.
+                  </p>
+                </div>
+
+                <div style="clear: both;">
+                  <h2>Interdisciplinary</h2>
+
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Snow-cholera-map.jpg" width="450px" style="display: inline-block; padding: 1em; float: left;">
+
+                  <p style="margin: 1em;">
+                    Now, spatial science is often a part of other types of geographies.
+                    For example, John Snow's cholera map to the left is often cited as a seminal work in the fields of both GIS and medical geography.
+                  </p>
+
+                  <p>
+                    Other examples include
+                  </p>
+
+                  <ul>
+                    <li>Feminist geographers using spatial science to determine the genderness of spaces.</li>
+                    <li>Political geographers sharing the census or quantify gerrymandering.</li>
+                    <li>Human geographers adding a quantitative wrinkle to their study of movement.</li>
+                  </ul>
+
+                  <p>
+                    Such visualizations, never easier to make thanks to computerized packages like ArcGIS, are set to lower the barrier to entry for spatial science.
+                  </p>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="importance">
+
+                <h1>Why is Spatial Science Important?</h1>
+
+                <img src="http://imgs.xkcd.com/comics/upside_down_map.png" style="display: block; margin: auto; width: 100%; min-width: 300px; max-width: 500px;">
+
+                <p style="margin: 1.5em;">
+                An awareness of spatial science is necessary to, well, move around the world.
+                It is also important to be able to make critical distincitons of information like maps.
+                Mark Monmonier's <a href="http://www.amazon.com/How-Lie-Maps-2nd-Edition/dp/0226534219"><i>How to Lie with Maps</i></a> is a collection
+                critical observations about how distortions in data
+                can have an effect on what economic, social, and political decisions come to be.
+                </p>
+
+                <img src="http://i.imgur.com/Ep9iRWe.jpg" style="height: 450px; display: block; margin: auto;">
+
+                <p style="margin: 1.5em;">
+                For example, take this projection of the globe in a North Korean museum.
+                It is heavily distorted and is a <i>little</i> revisionist.
+                Israel doesn't seem to exist, but the Suez Canal just became a lot more impressive.
+                It also places Korea at the center of the installation.
+                </p>
+
+              </div>
           </div>
-
-          <pre>
-          background
-          applications
-          what is it important
-          </pre>
-
         </div>
 
         <script src="/js/jquery.min.js"></script>
