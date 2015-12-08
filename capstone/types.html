@@ -13,6 +13,51 @@
           <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+
+        <style>
+        #rainbow span {
+    -webkit-animation: colorRotate 6s linear 0s infinite;
+     -moz-animation: colorRotate 6s linear 0s infinite;
+       -o-animation: colorRotate 6s linear 0s infinite;
+          animation: colorRotate 6s linear 0s infinite; }
+        }
+
+        @-webkit-keyframes colorRotate {
+        from { color: rgb(255, 0, 0); }
+        16.6% { color: rgb(255, 0, 255); }
+        33.3% { color: rgb(0, 0, 255); }
+        50% { color: rgb(0, 255, 255); }
+        66.6% { color: rgb(0, 255, 0); }
+        83.3% { color: rgb(255, 255, 0); }
+        to { color: rgb(255, 0, 0); } }
+
+        @-moz-keyframes colorRotate {
+        from { color: rgb(255, 0, 0); }
+        16.6% { color: rgb(255, 0, 255); }
+        33.3% { color: rgb(0, 0, 255); }
+        50% { color: rgb(0, 255, 255); }
+        66.6% { color: rgb(0, 255, 0); }
+        83.3% { color: rgb(255, 255, 0); }
+        to { color: rgb(255, 0, 0); } }
+
+        @-o-keyframes colorRotate {
+        from { color: rgb(255, 0, 0); }
+        16.6% { color: rgb(255, 0, 255); }
+        33.3% { color: rgb(0, 0, 255); }
+        50% { color: rgb(0, 255, 255); }
+        66.6% { color: rgb(0, 255, 0); }
+        83.3% { color: rgb(255, 255, 0); }
+        to { color: rgb(255, 0, 0); } }
+
+        @keyframes colorRotate {
+        from { color: rgb(255, 0, 0); }
+        16.6% { color: rgb(255, 0, 255); }
+        33.3% { color: rgb(0, 0, 255); }
+        50% { color: rgb(0, 255, 255); }
+        66.6% { color: rgb(0, 255, 0); }
+        83.3% { color: rgb(255, 255, 0); }
+        to { color: rgb(255, 0, 0); } }
+        </style>
     </head>
     <body>
         <div class="blog-masthead">
@@ -119,31 +164,7 @@
                 </div>
               </div>
             </div>
-            <!--
-            <div class="panel panel-default">
-              <div class="panel-heading" role="tab" id="headingFour">
-                <h4 class="panel-title">
-                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    Feminist
-                  </a>
-                </h4>
-              </div>
-              <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
-                <div class="panel-body">
-                  <div class="media">
-                      <div class="media-left media-middle">
-                          <a href="#">
-                            <img src="img/types-feminist.jpg" height="400px">
-                          </a>
-                      </div>
-                      <div class="media-body media-middle">
-                      ...
-                      </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
+
             <div class="panel panel-default">
               <div class="panel-heading" role="tab" id="headingFive">
                 <h4 class="panel-title">
@@ -169,11 +190,50 @@
                 </div>
               </div>
             </div>
-          </div>
 
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingFour">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour" id="rainbow" style="font-weight: bold; font-family: Impact; font-size: 16pt;">
+                    What Type of Geographer Are You???
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                <div class="panel-body">
+                  <a href="http://www.buzzfeed.com/zac1/what-type-of-geographer-are-you-20bur" style="font-size: 28pt;">Take the quiz!</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <script src="/js/jquery.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+          var DURATION = 6;
+          var heading = document.getElementById("rainbow");
+          var title = heading.textContent.trim();
+          var hueChange = Math.floor(360 / title.length);
+
+          heading.innerText = "";
+          var newHTML = "";
+          for (var i in title) {
+            var c = title[i];
+            var delay = (DURATION * ((i * hueChange) % 360) / 360) - DURATION + 's';
+            var attrs = [
+              'color: hsl(' + (i * hueChange) + ', 100%, 50%)',
+              'animation-delay: ' + delay,
+              '-webkit-animation-delay: ' + delay,
+              '-moz-animation-delay: ' + delay,
+              '-o-animation-delay: ' + delay,
+            ];
+            attrs = attrs.join(";");
+
+            newHTML += '<span style="' + attrs + '">' + c + '</span>';
+          }
+          heading.innerHTML = newHTML;
+
+        </script>
     </body>
 </html>
